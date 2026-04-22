@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const image = require('../../utils/image')
 const app = getApp()
 
 Page({
@@ -28,7 +29,13 @@ Page({
   async loadCart() {
     try {
       const res = await api.getCart()
-      const list = res.data.list || []
+      const list = (res.data.list || []).map(item => ({
+        ...item,
+        product: {
+          ...item.product,
+          images: image.formatImageUrls(item.product.images)
+        }
+      }))
       const total = res.data.total || 0
       const allSelected = list.every(item => item.selected === 1)
 

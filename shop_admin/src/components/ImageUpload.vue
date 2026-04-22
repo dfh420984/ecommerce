@@ -28,8 +28,12 @@ import { Plus } from '@element-plus/icons-vue'
 
 const props = defineProps({
   modelValue: {
-    type: Array,
+    type: [Array, String],
     default: () => []
+  },
+  max: {
+    type: Number,
+    default: 9
   }
 })
 
@@ -60,9 +64,18 @@ const initFileList = (urls) => {
 watch(
   () => props.modelValue,
   (val) => {
+    let urls = []
+    
+    // 处理字符串（单图）或数组（多图）
+    if (typeof val === 'string') {
+      urls = val ? [val] : []
+    } else if (Array.isArray(val)) {
+      urls = val
+    }
+    
     // 只在初始化或外部数据变化时更新，避免与上传操作冲突
-    if (fileList.value.length === 0 || val.length !== fileList.value.length) {
-      fileList.value = initFileList(val)
+    if (fileList.value.length === 0 || urls.length !== fileList.value.length) {
+      fileList.value = initFileList(urls)
     }
   },
   { immediate: true }
@@ -81,6 +94,13 @@ const beforeUpload = (file) => {
     ElMessage.error('图片大小不能超过 5MB!')
     return false
   }
+  
+  // 检查上传数量限制
+  if (fileList.value.length >= props.max) {
+    ElMessage.error(`最多只能上传 ${props.max} 张图片!`)
+    return false
+  }
+  
   return true
 }
 
@@ -102,7 +122,15 @@ const handleSuccess = (response, uploadFile, fileListParam) => {
     // 通知父组件更新
     const urls = newFileList.map(file => file.url).filter(url => url)
     console.log('更新图片列表:', urls)
-    emit('update:modelValue', urls)
+    
+    // 根据 max 属性决定返回类型
+    if (props.max === 1) {
+      // 单图模式：返回字符串
+      emit('update:modelValue', urls[0] || '')
+    } else {
+      // 多图模式：返回数组
+      emit('update:modelValue', urls)
+    }
     
     ElMessage.success('上传成功')
   } else {
@@ -123,7 +151,14 @@ const handleRemove = (uploadFile) => {
     .map(file => file.url)
     .filter(url => url)
   
-  emit('update:modelValue', urls)
+  // 根据 max 属性决定返回类型
+  if (props.max === 1) {
+    // 单图模式：返回字符串
+    emit('update:modelValue', urls[0] || '')
+  } else {
+    // 多图模式：返回数组
+    emit('update:modelValue', urls)
+  }
 }
 
 // 预览图片

@@ -18,7 +18,7 @@ func SetupRouter() *gin.Engine {
 		upload := api.Group("/upload")
 		upload.Use(middleware.Auth())
 		{
-			upload.POST("", handlers.UploadImage)         // 上传图片
+			upload.POST("", handlers.UploadImage)       // 上传图片
 			upload.POST("/video", handlers.UploadVideo) // 上传视频
 		}
 
@@ -30,6 +30,7 @@ func SetupRouter() *gin.Engine {
 
 			miniapp.GET("/banners", handlers.GetBanners)
 			miniapp.GET("/categories", handlers.GetCategories)
+			miniapp.GET("/categories/:id/sub", handlers.GetSubCategories)
 			miniapp.GET("/products", handlers.GetProducts)
 			miniapp.GET("/products/recommend", handlers.GetRecommendProducts)
 			miniapp.GET("/products/new", handlers.GetNewProducts)

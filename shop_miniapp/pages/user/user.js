@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const image = require('../../utils/image')
 const app = getApp()
 
 Page({
@@ -41,6 +42,10 @@ Page({
     try {
       const res = await api.getUserInfo()
       const userInfo = res.data
+      // 格式化头像 URL
+      if (userInfo.avatar) {
+        userInfo.avatar = image.formatImageUrl(userInfo.avatar)
+      }
       app.setUserInfo(userInfo)
       this.setData({ userInfo })
     } catch (err) {

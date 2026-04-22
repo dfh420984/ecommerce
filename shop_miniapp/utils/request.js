@@ -74,8 +74,14 @@ const getPayURL = (data) => request({ url: '/user/pay', method: 'POST', data })
 const getPayStatus = (id) => request({ url: `/user/pay/status/${id}` })
 const applyRefund = (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' })
 
+// 通用 GET 和 POST 方法
+const get = (url, params) => request({ url, method: 'GET', data: params })
+const post = (url, data) => request({ url, method: 'POST', data })
+
 module.exports = {
   request,
+  get,
+  post,
   login,
   wechatLogin,
   register,

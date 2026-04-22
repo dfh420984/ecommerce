@@ -1,8 +1,10 @@
 App({
   globalData: {
     apiBase: 'http://localhost:8686/api',
+    imageUrl: 'http://localhost:8686',  // 图片基础 URL
     userInfo: null,
-    token: null
+    token: null,
+    categoryType: '' // 分类页面类型：'recommend' 或 'new' 或空
   },
 
   onLaunch() {

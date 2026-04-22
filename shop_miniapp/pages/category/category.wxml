@@ -1,9 +1,27 @@
 <view class="container">
   <view class="category-wrapper">
+    <!-- 分类列表（手风琴式展开） -->
     <scroll-view class="category-left" scroll-y>
-      <view class="category-item {{selectedCategoryId === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryChange" data-id="{{item.id}}">
-        <text>{{item.name}}</text>
-      </view>
+      <block wx:for="{{categories}}" wx:key="id">
+        <!-- 一级分类 -->
+        <view class="category-item {{selectedCategoryId === item.id && !selectedSubCategoryId ? 'active' : ''}}" 
+              bindtap="onCategoryChange" 
+              data-id="{{item.id}}">
+          <text>{{item.name}}</text>
+        </view>
+        
+        <!-- 子分类（仅当前选中的分类显示） -->
+        <view class="sub-category-wrapper" wx:if="{{selectedCategoryId === item.id && subCategories.length > 0}}">
+          <view class="sub-category-item {{selectedSubCategoryId === subItem.id ? 'active' : ''}}" 
+                wx:for="{{subCategories}}" 
+                wx:for-item="subItem"
+                wx:key="id" 
+                bindtap="onSubCategoryChange" 
+                data-id="{{subItem.id}}">
+            <text class="sub-category-text">{{subItem.name}}</text>
+          </view>
+        </view>
+      </block>
     </scroll-view>
 
     <scroll-view class="category-right" scroll-y bindscrolltolower="onReachBottom">

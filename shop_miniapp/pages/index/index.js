@@ -1,3 +1,7 @@
+const api = require('../../utils/request')
+const image = require('../../utils/image')
+const app = getApp()
+
 Page({
   data: {
     banners: [],
@@ -25,11 +29,32 @@ Page({
         api.getNewProducts()
       ])
 
+      // 格式化图片 URL
+      const formattedBanners = (banners.data || []).map(item => ({
+        ...item,
+        image: image.formatImageUrl(item.image)
+      }))
+
+      const formattedCategories = (categories.data || []).map(item => ({
+        ...item,
+        icon: image.formatImageUrl(item.icon)
+      }))
+
+      const formattedRecommend = (recommend.data || []).map(item => ({
+        ...item,
+        images: image.formatImageUrls(item.images)
+      }))
+
+      const formattedNewProducts = (newProducts.data || []).map(item => ({
+        ...item,
+        images: image.formatImageUrls(item.images)
+      }))
+
       this.setData({
-        banners: banners.data || [],
-        categories: categories.data || [],
-        recommendProducts: recommend.data || [],
-        newProducts: newProducts.data || []
+        banners: formattedBanners,
+        categories: formattedCategories,
+        recommendProducts: formattedRecommend,
+        newProducts: formattedNewProducts
       })
     } catch (err) {
       console.error(err)
@@ -67,5 +92,13 @@ Page({
   onProductTap(e) {
     const { id } = e.currentTarget.dataset
     wx.navigateTo({ url: `/pages/product/product?id=${id}` })
+  },
+
+  onMoreRecommendTap() {
+    wx.navigateTo({ url: '/pages/product-list/product-list?type=recommend' })
+  },
+
+  onMoreNewProductsTap() {
+    wx.navigateTo({ url: '/pages/product-list/product-list?type=new' })
   }
 })

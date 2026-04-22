@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const image = require('../../utils/image')
 const app = getApp()
 
 Page({
@@ -36,7 +37,13 @@ Page({
         status: this.data.status || undefined
       })
 
-      const list = res.data.list || []
+      const list = (res.data.list || []).map(order => ({
+        ...order,
+        items: (order.items || []).map(item => ({
+          ...item,
+          product_image: image.formatImageUrl(item.product_image)
+        }))
+      }))
       this.setData({
         orders: this.data.page === 1 ? list : [...this.data.orders, ...list],
         hasMore: list.length >= this.data.pageSize,

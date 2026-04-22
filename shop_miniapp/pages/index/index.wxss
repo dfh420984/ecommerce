@@ -96,9 +96,10 @@
 }
 
 .product-item {
-  width: 50%;
+  width: calc(50% - 20rpx);
   padding: 0 10rpx;
   margin-bottom: 20rpx;
+  box-sizing: border-box;
 }
 
 .product-image {

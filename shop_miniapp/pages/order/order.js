@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const image = require('../../utils/image')
 const app = getApp()
 
 Page({
@@ -25,7 +26,15 @@ Page({
   async loadOrder() {
     try {
       const res = await api.getOrder(this.data.orderNo)
-      this.setData({ order: res.data })
+      const order = res.data
+      // 格式化订单商品图片
+      if (order.items) {
+        order.items = order.items.map(item => ({
+          ...item,
+          product_image: image.formatImageUrl(item.product_image)
+        }))
+      }
+      this.setData({ order })
     } catch (err) {
       console.error(err)
     }

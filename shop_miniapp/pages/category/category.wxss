@@ -24,6 +24,7 @@
   font-size: 26rpx;
   color: #666;
   position: relative;
+  border-bottom: 1rpx solid #e8e8e8;
 }
 
 .category-item.active {
@@ -41,6 +42,45 @@
   background: #ff6b6b;
 }
 
+/* 子分类容器 */
+.sub-category-wrapper {
+  background: #f0f0f0;
+}
+
+/* 子分类项 */
+.sub-category-item {
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  padding-left: 40rpx;
+  padding-right: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+  position: relative;
+  border-bottom: 1rpx solid #e5e5e5;
+}
+
+.sub-category-item.active {
+  background: #fff;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.sub-category-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4rpx;
+  background: #ff6b6b;
+}
+
+.sub-category-text {
+  font-size: 24rpx;
+  flex: 1;
+}
+
 .category-right {
   flex: 1;
   height: 100%;
@@ -55,9 +95,10 @@
 }
 
 .product-item {
-  width: 50%;
+  width: calc(50% - 20rpx);
   padding: 0 10rpx;
   margin-bottom: 20rpx;
+  box-sizing: border-box;
 }
 
 .product-image {

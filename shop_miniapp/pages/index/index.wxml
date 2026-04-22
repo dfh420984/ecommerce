@@ -23,7 +23,7 @@
   <view class="section">
     <view class="section-header">
       <text class="section-title">推荐商品</text>
-      <text class="section-more">更多 ></text>
+      <text class="section-more" bindtap="onMoreRecommendTap">更多 ></text>
     </view>
     <view class="product-grid">
       <view class="product-item" wx:for="{{recommendProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
@@ -42,7 +42,7 @@
   <view class="section">
     <view class="section-header">
       <text class="section-title">新品上市</text>
-      <text class="section-more">更多 ></text>
+      <text class="section-more" bindtap="onMoreNewProductsTap">更多 ></text>
     </view>
     <view class="product-list">
       <view class="product-list-item" wx:for="{{newProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">

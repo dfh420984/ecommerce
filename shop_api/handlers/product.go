@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+
 	"github.com/gin-gonic/gin"
 	"shop_api/database"
 	"shop_api/models"
@@ -8,23 +10,28 @@ import (
 )
 
 type CategoryCreateInput struct {
-	Name     string `json:"name" binding:"required"`
-	ParentID uint64 `json:"parent_id"`
-	Sort     int    `json:"sort"`
-	Icon     string `json:"icon"`
-	Image    string `json:"image"`
-	Status   int8   `json:"status"`
+	Name     string      `json:"name" binding:"required"`
+	ParentID uint64      `json:"parent_id"`
+	Sort     int         `json:"sort"`
+	Icon     interface{} `json:"icon"`
+	Image    string      `json:"image"`
+	Status   int8        `json:"status"`
 }
 
 func GetCategories(c *gin.Context) {
 	var categories []models.Category
-	if err := database.GetDB().Where("status = ?", 1).Order("sort ASC, id ASC").Find(&categories).Error; err != nil {
+	// 只查询一级分类（parent_id = 0）
+	if err := database.GetDB().Where("status = ? AND parent_id = ?", 1, 0).Order("sort ASC, id ASC").Find(&categories).Error; err != nil {
 		utils.Fail(c, "获取分类失败")
 		return
 	}
 
-	tree := buildCategoryTree(categories, 0)
-	utils.Success(c, tree)
+	// 处理 icon 字段：如果是 JSON 数组，取第一个元素
+	for i := range categories {
+		processCategoryIcon(&categories[i])
+	}
+
+	utils.Success(c, categories)
 }
 
 func buildCategoryTree(categories []models.Category, parentID uint64) []models.Category {
@@ -32,10 +39,61 @@ func buildCategoryTree(categories []models.Category, parentID uint64) []models.C
 	for _, cat := range categories {
 		if cat.ParentID == parentID {
 			cat.Children = buildCategoryTree(categories, cat.ID)
+			// 处理子分类的 icon 字段
+			for i := range cat.Children {
+				processCategoryIcon(&cat.Children[i])
+			}
 			result = append(result, cat)
 		}
 	}
 	return result
+}
+
+// processCategoryIcon 处理分类 icon 字段，确保返回字符串而不是数组
+func processCategoryIcon(category *models.Category) {
+	// 如果 icon 是 JSON 数组格式（历史数据），取第一个元素
+	if len(category.Icon) > 0 && category.Icon[0] == '[' {
+		var icons []string
+		if err := json.Unmarshal([]byte(category.Icon), &icons); err == nil && len(icons) > 0 {
+			category.Icon = icons[0]
+		}
+	}
+}
+
+// parseIconField 解析 icon 字段，支持字符串或数组格式
+func parseIconField(icon interface{}) string {
+	switch v := icon.(type) {
+	case string:
+		return v
+	case []interface{}:
+		// 如果是数组，取第一个元素
+		if len(v) > 0 {
+			if str, ok := v[0].(string); ok {
+				return str
+			}
+		}
+		return ""
+	default:
+		return ""
+	}
+}
+
+// getAllCategoryIDs 递归获取分类及其所有子分类的ID
+func getAllCategoryIDs(categoryID uint64) []uint64 {
+	var ids []uint64
+	ids = append(ids, categoryID)
+
+	// 查找直接子分类
+	var children []models.Category
+	database.GetDB().Where("parent_id = ?", categoryID).Find(&children)
+
+	// 递归获取子分类的ID
+	for _, child := range children {
+		childIDs := getAllCategoryIDs(child.ID)
+		ids = append(ids, childIDs...)
+	}
+
+	return ids
 }
 
 func GetCategory(c *gin.Context) {
@@ -48,6 +106,24 @@ func GetCategory(c *gin.Context) {
 	}
 
 	utils.Success(c, category)
+}
+
+// GetSubCategories 获取子分类列表
+func GetSubCategories(c *gin.Context) {
+	parentID := c.Param("id")
+
+	var categories []models.Category
+	if err := database.GetDB().Where("status = ? AND parent_id = ?", 1, parentID).Order("sort ASC, id ASC").Find(&categories).Error; err != nil {
+		utils.Fail(c, "获取子分类失败")
+		return
+	}
+
+	// 处理 icon 字段
+	for i := range categories {
+		processCategoryIcon(&categories[i])
+	}
+
+	utils.Success(c, categories)
 }
 
 func CreateCategory(c *gin.Context) {
@@ -72,7 +148,7 @@ func CreateCategory(c *gin.Context) {
 		ParentID: input.ParentID,
 		Level:    level,
 		Sort:     input.Sort,
-		Icon:     input.Icon,
+		Icon:     parseIconField(input.Icon),
 		Image:    input.Image,
 		Status:   input.Status,
 	}
@@ -118,7 +194,7 @@ func UpdateCategory(c *gin.Context) {
 	category.ParentID = input.ParentID
 	category.Level = level
 	category.Sort = input.Sort
-	category.Icon = input.Icon
+	category.Icon = parseIconField(input.Icon)
 	category.Image = input.Image
 	category.Status = input.Status
 
@@ -170,7 +246,9 @@ func GetProducts(c *gin.Context) {
 	query := database.GetDB().Model(&models.Product{}).Where("status = ?", 1)
 
 	if input.CategoryID > 0 {
-		query = query.Where("category_id = ?", input.CategoryID)
+		// 获取该分类及其所有子分类的ID
+		categoryIDs := getAllCategoryIDs(input.CategoryID)
+		query = query.Where("category_id IN ?", categoryIDs)
 	}
 	if input.Keyword != "" {
 		query = query.Where("name LIKE ?", "%"+input.Keyword+"%")

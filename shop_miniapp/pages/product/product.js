@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const image = require('../../utils/image')
 const app = getApp()
 
 Page({
@@ -23,7 +24,12 @@ Page({
   async loadProduct() {
     try {
       const res = await api.getProduct(this.data.id)
-      this.setData({ product: res.data })
+      const product = res.data
+      // 格式化图片 URL
+      if (product.images) {
+        product.images = image.formatImageUrls(product.images)
+      }
+      this.setData({ product })
     } catch (err) {
       console.error(err)
     }

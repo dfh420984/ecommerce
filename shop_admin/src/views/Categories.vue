@@ -44,6 +44,9 @@
             <el-option v-for="cat in flatCategories" :key="cat.id" :label="cat.name" :value="cat.id" />
           </el-select>
         </el-form-item>
+        <el-form-item label="分类图标" prop="icon">
+          <ImageUpload v-model="form.icon" :max="1" />
+        </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" :min="0" />
         </el-form-item>
@@ -66,6 +69,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '@/api/shop'
+import ImageUpload from '@/components/ImageUpload.vue'
 
 const tableData = ref([])
 const dialogVisible = ref(false)
@@ -76,6 +80,7 @@ const editId = ref(null)
 const form = ref({
   name: '',
   parent_id: 0,
+  icon: '',
   sort: 0,
   status: 1
 })
@@ -101,13 +106,16 @@ const loadData = async () => {
 }
 
 const handleAdd = () => {
-  form.value = { name: '', parent_id: 0, sort: 0, status: 1 }
+  form.value = { name: '', parent_id: 0, icon: '', sort: 0, status: 1 }
   isEdit.value = false
   dialogVisible.value = true
 }
 
 const handleEdit = (row) => {
-  form.value = { ...row }
+  form.value = {
+    ...row,
+    icon: row.icon || ''
+  }
   isEdit.value = true
   editId.value = row.id
   dialogVisible.value = true
