@@ -1,0 +1,33 @@
+<view class="container">
+  <view class="category-wrapper">
+    <scroll-view class="category-left" scroll-y>
+      <view class="category-item {{selectedCategoryId === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryChange" data-id="{{item.id}}">
+        <text>{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <scroll-view class="category-right" scroll-y bindscrolltolower="onReachBottom">
+      <view class="product-grid">
+        <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+          <image class="product-image" src="{{item.images[0] || '/static/product.png'}}" mode="aspectFill" />
+          <view class="product-info">
+            <text class="product-name">{{item.name}}</text>
+            <view class="product-bottom">
+              <text class="product-price">¥{{item.price}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="loading-tip" wx:if="{{loading}}">
+        <text>加载中...</text>
+      </view>
+      <view class="loading-tip" wx:elif="{{!hasMore && products.length > 0}}">
+        <text>没有更多了</text>
+      </view>
+      <view class="empty-tip" wx:if="{{products.length === 0 && !loading}}">
+        <text>暂无商品</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+dist/
+.env.local
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+shop_api/shop_api.exe
+shop_admin/node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 上传文件（可选，如果不想上传测试图片）
+# shop_api/uploads/*
+# !shop_api/uploads/.gitkeep
+
+*.log
+*.log-*

@@ -1,0 +1,63 @@
+<view class="container">
+  <view class="user-header">
+    <view class="user-info" bindtap="onLoginTap">
+      <image class="avatar" src="{{userInfo.avatar || '/static/user/avatar.png'}}" mode="aspectFill" />
+      <text class="nickname">{{userInfo.nickname || '点击登录'}}</text>
+    </view>
+  </view>
+
+  <view class="order-section">
+    <view class="order-header">
+      <text class="order-title">我的订单</text>
+      <view class="order-more" bindtap="onMenuTap" data-url="/pages/order-list/order-list">
+        <text>全部订单</text>
+        <text>></text>
+      </view>
+    </view>
+    <view class="order-status-grid">
+      <view class="status-item" bindtap="onOrderStatusTap" data-status="1">
+        <image class="status-icon" src="/static/user/order-pending.png" mode="aspectFit" />
+        <text class="status-text">待付款</text>
+        <view class="badge" wx:if="{{orderCounts.pending > 0}}">{{orderCounts.pending}}</view>
+      </view>
+      <view class="status-item" bindtap="onOrderStatusTap" data-status="2">
+        <image class="status-icon" src="/static/user/order-paid.png" mode="aspectFit" />
+        <text class="status-text">待发货</text>
+        <view class="badge" wx:if="{{orderCounts.paid > 0}}">{{orderCounts.paid}}</view>
+      </view>
+      <view class="status-item" bindtap="onOrderStatusTap" data-status="3">
+        <image class="status-icon" src="/static/user/order-shipped.png" mode="aspectFit" />
+        <text class="status-text">配送中</text>
+        <view class="badge" wx:if="{{orderCounts.shipped > 0}}">{{orderCounts.shipped}}</view>
+      </view>
+      <view class="status-item" bindtap="onOrderStatusTap" data-status="4">
+        <image class="status-icon" src="/static/user/order-received.png" mode="aspectFit" />
+        <text class="status-text">已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" wx:for="{{menuItems[0]}}" wx:key="text" bindtap="onMenuTap" data-url="{{item.url}}">
+      <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+      <text class="menu-text">{{item.text}}</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" wx:for="{{menuItems[1]}}" wx:key="text" bindtap="onMenuTap" data-url="{{item.url}}">
+      <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+      <text class="menu-text">{{item.text}}</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" wx:for="{{menuItems[2]}}" wx:key="text" bindtap="onMenuTap" data-url="{{item.url}}">
+      <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+      <text class="menu-text">{{item.text}}</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+</view>

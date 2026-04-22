@@ -1,0 +1,11 @@
+{
+  "name": "shop-miniapp",
+  "version": "1.0.0",
+  "description": "电商微信小程序",
+  "main": "app.js",
+  "scripts": {
+    "dev": "echo '使用微信开发者工具打开'",
+    "build": "echo '使用微信开发者工具构建'"
+  },
+  "dependencies": {}
+}

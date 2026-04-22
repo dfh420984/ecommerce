@@ -1,0 +1,156 @@
+.container {
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 20rpx 0;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: #666;
+  padding: 10rpx 0;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 4rpx;
+  background: #ff6b6b;
+  border-radius: 2rpx;
+}
+
+.order-list {
+  padding: 20rpx 30rpx;
+}
+
+.order-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.order-status {
+  font-size: 26rpx;
+  color: #ff6b6b;
+}
+
+.order-status.status-pending {
+  color: #ff6b6b;
+}
+
+.order-status.status-paid {
+  color: #409eff;
+}
+
+.order-status.status-shipped {
+  color: #67c23a;
+}
+
+.order-status.status-received {
+  color: #909399;
+}
+
+.order-products {
+  margin-bottom: 20rpx;
+}
+
+.product-item {
+  display: flex;
+  padding: 10rpx 0;
+}
+
+.product-image {
+  width: 120rpx;
+  height: 120rpx;
+  background: #f8f8f8;
+  border-radius: 8rpx;
+  flex-shrink: 0;
+}
+
+.product-info {
+  flex: 1;
+  margin-left: 20rpx;
+  overflow: hidden;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10rpx;
+}
+
+.product-price {
+  font-size: 28rpx;
+  color: #ff6b6b;
+}
+
+.product-quantity {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.order-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.order-total {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.loading-tip, .empty-tip {
+  text-align: center;
+  padding: 30rpx;
+  color: #999;
+  font-size: 24rpx;
+}

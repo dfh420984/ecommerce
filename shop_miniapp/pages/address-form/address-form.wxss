@@ -1,0 +1,51 @@
+.container {
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+.form-section {
+  background: #fff;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.form-item:last-child {
+  border-bottom: none;
+}
+
+.form-label {
+  width: 160rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-picker {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.submit-bar {
+  padding: 40rpx 30rpx;
+}
+
+.submit-btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #ff6b6b;
+  color: #fff;
+  font-size: 30rpx;
+  text-align: center;
+  border-radius: 44rpx;
+}

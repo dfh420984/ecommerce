@@ -1,0 +1,96 @@
+.container {
+  min-height: 100vh;
+  background: #f8f8f8;
+  padding-bottom: 120rpx;
+}
+
+.address-list {
+  padding: 20rpx 30rpx;
+}
+
+.address-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.address-content {
+  margin-bottom: 20rpx;
+}
+
+.address-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.consignee {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+  margin-right: 20rpx;
+}
+
+.phone {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.default-tag {
+  background: #ff6b6b;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  margin-left: 10rpx;
+}
+
+.address-detail {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+}
+
+.address-actions {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.action-btn {
+  font-size: 26rpx;
+  color: #409eff;
+}
+
+.delete-btn {
+  color: #ff6b6b;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 100rpx;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 30rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.add-btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #ff6b6b;
+  color: #fff;
+  font-size: 30rpx;
+  text-align: center;
+  border-radius: 44rpx;
+}

@@ -1,0 +1,152 @@
+.container {
+  min-height: 100vh;
+  background: #f8f8f8;
+  padding-bottom: 120rpx;
+}
+
+.address-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.address-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.address-info {
+  flex: 1;
+}
+
+.consignee {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.address-detail {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+}
+
+.no-address {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.arrow {
+  color: #ccc;
+  font-size: 28rpx;
+}
+
+.remark-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.remark-input {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.order-section {
+  background: #fff;
+  padding: 30rpx;
+}
+
+.order-item {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.item-image {
+  width: 160rpx;
+  height: 160rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  margin-left: 20rpx;
+  overflow: hidden;
+}
+
+.item-name {
+  font-size: 28rpx;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-bottom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+.item-price {
+  font-size: 30rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.item-quantity {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.total-info {
+  display: flex;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.total-price {
+  font-size: 40rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.submit-btn {
+  width: 200rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  background: #ff6b6b;
+  color: #fff;
+  font-size: 30rpx;
+  text-align: center;
+  border-radius: 35rpx;
+}

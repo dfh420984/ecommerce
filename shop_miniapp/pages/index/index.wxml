@@ -1,0 +1,60 @@
+<view class="container">
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索商品" disabled />
+  </view>
+
+  <view class="banner-section">
+    <swiper class="banner-swiper" indicator-dots autoplay circular>
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <image class="banner-image" src="{{item.image}}" mode="aspectFill" bindtap="onBannerTap" data-link="{{item.link}}" data-link-type="{{item.link_type}}" data-target-id="{{item.target_id}}" />
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <view class="category-section">
+    <view class="category-grid">
+      <view class="category-item" wx:for="{{categories}}" wx:key="id" bindtap="onCategoryTap" data-id="{{item.id}}">
+        <image class="category-icon" src="{{item.icon || '/static/category.png'}}" mode="aspectFit" />
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">推荐商品</text>
+      <text class="section-more">更多 ></text>
+    </view>
+    <view class="product-grid">
+      <view class="product-item" wx:for="{{recommendProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+        <image class="product-image" src="{{item.images[0] || '/static/product.png'}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-bottom">
+            <text class="product-price">¥{{item.price}}</text>
+            <text class="product-original">¥{{item.original_price}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">新品上市</text>
+      <text class="section-more">更多 ></text>
+    </view>
+    <view class="product-list">
+      <view class="product-list-item" wx:for="{{newProducts}}" wx:key="id" bindtap="onProductTap" data-id="{{item.id}}">
+        <image class="list-product-image" src="{{item.images[0] || '/static/product.png'}}" mode="aspectFill" />
+        <view class="list-product-info">
+          <text class="list-product-name">{{item.name}}</text>
+          <view class="list-product-bottom">
+            <text class="list-product-price">¥{{item.price}}</text>
+            <text class="list-product-sales">销量{{item.sales}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
