@@ -21,7 +21,7 @@
   </view>
 
   <view class="empty-cart" wx:if="{{isEmpty}}">
-    <image class="empty-image" src="/static/empty-cart.png" mode="aspectFit" />
+    <image class="empty-image" src="/static/pay/empty-cart.png" mode="aspectFit" />
     <text class="empty-text">购物车是空的</text>
     <button class="empty-btn" bindtap="goShopping">去逛逛</button>
   </view>

@@ -15,7 +15,7 @@ Page({
         { icon: '/static/user/coupon.png', text: '优惠券', url: '/pages/coupon/coupon' }
       ],
       [
-        { icon: '/static/user/help.png', text: '帮助中心', url: '' },
+        { icon: '/static/user/help.png', text: '帮助中心', url: '/pages/help/help' },
         { icon: '/static/user/about.png', text: '关于我们', url: '/pages/about/about' }
       ]
     ],

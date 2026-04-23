@@ -14,6 +14,7 @@
     "pages/login/login",
     "pages/pay/pay",
     "pages/about/about",
+    "pages/help/help",
     "pages/coupon/coupon",
     "pages/register/register",
     "pages/webview/webview"

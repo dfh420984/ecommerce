@@ -53,6 +53,12 @@ const routes = [
         name: 'Users',
         component: () => import('@/views/Users.vue'),
         meta: { title: '用户管理' }
+      },
+      {
+        path: 'configs',
+        name: 'Configs',
+        component: () => import('@/views/Configs.vue'),
+        meta: { title: '系统配置' }
       }
     ]
   }

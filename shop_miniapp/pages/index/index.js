@@ -1,5 +1,6 @@
-const api = require('../../utils/request')
+const api = require('../../services/api')
 const image = require('../../utils/image')
+const config = require('../../utils/config')
 const app = getApp()
 
 Page({
@@ -10,14 +11,11 @@ Page({
     newProducts: []
   },
 
-  onLoad() {
+  async onLoad() {
+    // 从配置接口获取并设置导航栏标题
+    await config.setNavigationBarTitle('shop_name', '电商小程序')
+    // 加载页面数据
     this.loadData()
-  },
-
-  onShow() {
-    if (app.globalData.token) {
-      this.updateCartBadge()
-    }
   },
 
   async loadData() {
@@ -62,6 +60,12 @@ Page({
       })
     } catch (err) {
       console.error(err)
+    }
+  },
+
+  onShow() {
+    if (app.globalData.token) {
+      this.updateCartBadge()
     }
   },
 

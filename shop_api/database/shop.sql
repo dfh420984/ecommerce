@@ -237,4 +237,14 @@ INSERT INTO `products` (`name`, `category_id`, `price`, `original_price`, `stock
 
 INSERT INTO `configs` (`name`, `value`, `description`) VALUES
 ('shop_name', '电商小程序', '店铺名称'),
-('shop_logo', '/uploads/logo.png', '店铺Logo');
+('shop_logo', '/uploads/logo.png', '店铺Logo'),
+('shop_phone', '400-123-4567', '客服电话'),
+('shop_address', '北京市朝阳区xxx路xxx号', '店铺地址'),
+('min_order_amount', '99', '最小订单金额'),
+('free_shipping_amount', '199', '包邮金额'),
+('return_policy', '7天无理由退换货', '退换货政策'),
+('business_hours', '09:00-21:00', '营业时间'),
+('about_intro', '这是一款基于 Go + Vue3 + 微信小程序的电商系统，提供完整的商品展示、购物车、订单管理等功能。', '关于我们简介'),
+('about_tech_stack', '后端：Go + Gin + GORM + MySQL\n前端：Vue3 + Element Plus\n小程序：原生微信小程序', '技术栈说明'),
+('about_contact', '邮箱：contact@example.com\n电话：400-123-4567\n地址：北京市朝阳区xxx路xxx号', '联系方式'),
+('app_version', '1.0.0', '应用版本号');

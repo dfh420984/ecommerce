@@ -47,5 +47,9 @@ module.exports = {
   // 支付相关
   getPayURL: (data) => request({ url: '/user/pay', method: 'POST', data }),
   queryPayStatus: (id) => request({ url: `/user/pay/status/${id}`, method: 'GET' }),
-  applyRefund: (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' })
+  applyRefund: (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' }),
+
+  // 系统配置相关
+  getConfig: (name) => request({ url: `/miniapp/config/${name}`, method: 'GET' }),
+  getConfigsByNames: (names) => request({ url: '/miniapp/configs/batch', method: 'POST', data: { names } })
 }

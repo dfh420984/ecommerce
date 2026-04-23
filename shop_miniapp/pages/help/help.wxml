@@ -1,0 +1,67 @@
+<view class="container">
+  <!-- 搜索框 -->
+  <view class="search-box">
+    <input 
+      class="search-input" 
+      placeholder="搜索问题..." 
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+    />
+    <image class="search-icon" src="/static/user/search.png" mode="aspectFit" wx:if="{{!searchKeyword}}" />
+  </view>
+
+  <!-- 常见问题分类 -->
+  <view class="category-list">
+    <view 
+      class="category-item {{currentCategory === index ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="id"
+      bindtap="onCategoryTap"
+      data-index="{{index}}"
+    >
+      <text class="category-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 问题列表 -->
+  <view class="question-list">
+    <view 
+      class="question-item"
+      wx:for="{{filteredQuestions}}"
+      wx:key="id"
+      bindtap="onQuestionTap"
+      data-id="{{item.id}}"
+    >
+      <view class="question-header">
+        <text class="question-title">{{item.title}}</text>
+        <text class="arrow">{{expandedQuestionId === item.id ? '▲' : '▼'}}</text>
+      </view>
+      <view class="question-answer" wx:if="{{expandedQuestionId === item.id}}">
+        <text class="answer-text">{{item.answer}}</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{filteredQuestions.length === 0}}">
+      <text class="empty-text">暂无相关问题</text>
+    </view>
+  </view>
+
+  <!-- 联系客服 -->
+  <view class="contact-section">
+    <view class="contact-title">还没解决？联系客服</view>
+    <view class="contact-buttons">
+      <button class="contact-btn online" bindtap="onOnlineService">
+        <text class="btn-icon">💬</text>
+        <text>在线客服</text>
+      </button>
+      <button class="contact-btn phone" bindtap="onPhoneService">
+        <text class="btn-icon">📞</text>
+        <text>电话咨询</text>
+      </button>
+    </view>
+    <view class="service-time">
+      <text>服务时间：{{serviceTime || '09:00-21:00'}}</text>
+    </view>
+  </view>
+</view>

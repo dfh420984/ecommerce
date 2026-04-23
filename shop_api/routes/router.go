@@ -35,6 +35,10 @@ func SetupRouter() *gin.Engine {
 			miniapp.GET("/products/recommend", handlers.GetRecommendProducts)
 			miniapp.GET("/products/new", handlers.GetNewProducts)
 			miniapp.GET("/products/:id", handlers.GetProduct)
+
+			// 系统配置（小程序端）
+			miniapp.GET("/config/:name", handlers.GetConfigByName)
+			miniapp.POST("/configs/batch", handlers.GetConfigsByNames)
 		}
 
 		user := api.Group("/user")
@@ -116,6 +120,13 @@ func SetupRouter() *gin.Engine {
 			adminAuth.GET("/orders/:id", handlers.AdminGetOrder)
 			adminAuth.PUT("/orders/:id/ship", handlers.ShipOrder)
 			adminAuth.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
+
+			// 系统配置管理
+			adminAuth.GET("/configs", handlers.GetConfigs)
+			adminAuth.GET("/configs/:id", handlers.GetConfig)
+			adminAuth.POST("/configs", handlers.CreateConfig)
+			adminAuth.PUT("/configs/:id", handlers.UpdateConfig)
+			adminAuth.DELETE("/configs/:id", handlers.DeleteConfig)
 		}
 	}
 
