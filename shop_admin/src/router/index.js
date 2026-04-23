@@ -59,6 +59,12 @@ const routes = [
         name: 'Configs',
         component: () => import('@/views/Configs.vue'),
         meta: { title: '系统配置' }
+      },
+      {
+        path: 'help-center',
+        name: 'HelpCenter',
+        component: () => import('@/views/HelpCenter.vue'),
+        meta: { title: '帮助中心' }
       }
     ]
   }

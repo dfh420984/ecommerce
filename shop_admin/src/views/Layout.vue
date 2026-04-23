@@ -37,6 +37,10 @@
           <el-icon><Setting /></el-icon>
           <span>系统配置</span>
         </el-menu-item>
+        <el-menu-item index="/help-center">
+          <el-icon><QuestionFilled /></el-icon>
+          <span>帮助中心</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -70,7 +74,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { HomeFilled, Goods, PictureFilled, List, User, Setting } from '@element-plus/icons-vue'
+import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfo = computed(() => {

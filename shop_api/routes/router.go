@@ -39,6 +39,13 @@ func SetupRouter() *gin.Engine {
 			// 系统配置（小程序端）
 			miniapp.GET("/config/:name", handlers.GetConfigByName)
 			miniapp.POST("/configs/batch", handlers.GetConfigsByNames)
+
+			// 帮助中心（小程序端）
+			miniapp.GET("/help/categories", handlers.GetActiveHelpCategories)
+			miniapp.GET("/help/questions/:category_id", handlers.GetHelpQuestionsByCategory)
+			miniapp.GET("/help/question/:id", handlers.GetHelpQuestionDetail)
+			miniapp.GET("/help/search", handlers.SearchHelpQuestions)
+			miniapp.GET("/help/config", handlers.GetHelpConfig)
 		}
 
 		user := api.Group("/user")
@@ -127,6 +134,21 @@ func SetupRouter() *gin.Engine {
 			adminAuth.POST("/configs", handlers.CreateConfig)
 			adminAuth.PUT("/configs/:id", handlers.UpdateConfig)
 			adminAuth.DELETE("/configs/:id", handlers.DeleteConfig)
+
+			// 帮助中心分类管理
+			adminAuth.GET("/help/categories", handlers.GetHelpCategories)
+			adminAuth.POST("/help/categories", handlers.CreateHelpCategory)
+			adminAuth.PUT("/help/categories/:id", handlers.UpdateHelpCategory)
+			adminAuth.DELETE("/help/categories/:id", handlers.DeleteHelpCategory)
+
+			// 帮助中心问题管理
+			adminAuth.GET("/help/questions", handlers.GetHelpQuestions)
+			adminAuth.GET("/help/questions/:id", handlers.GetHelpQuestionDetail)
+			adminAuth.POST("/help/questions", handlers.CreateHelpQuestion)
+			adminAuth.PUT("/help/questions/:id", handlers.UpdateHelpQuestion)
+			adminAuth.DELETE("/help/questions/:id", handlers.DeleteHelpQuestion)
+			adminAuth.PUT("/help/questions/batch-status", handlers.BatchUpdateQuestionsStatus)
+			adminAuth.GET("/help/statistics", handlers.GetHelpStatistics)
 		}
 	}
 
