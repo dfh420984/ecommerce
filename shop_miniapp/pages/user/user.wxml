@@ -32,7 +32,7 @@
       </view>
       <view class="status-item" bindtap="onOrderStatusTap" data-status="4">
         <image class="status-icon" src="/static/user/order-received.png" mode="aspectFit" />
-        <text class="status-text">已完成</text>
+        <text class="status-text">已收货</text>
       </view>
     </view>
   </view>

@@ -15,7 +15,8 @@
     "pages/pay/pay",
     "pages/about/about",
     "pages/coupon/coupon",
-    "pages/register/register"
+    "pages/register/register",
+    "pages/webview/webview"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffffff",

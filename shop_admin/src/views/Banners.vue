@@ -16,6 +16,23 @@
             <el-image v-if="row.image" :src="row.image" style="width: 100px; height: 50px" fit="cover" />
           </template>
         </el-table-column>
+        <el-table-column label="链接类型" width="120">
+          <template #default="{ row }">
+            <el-tag v-if="row.link_type === 0" type="info">不跳转</el-tag>
+            <el-tag v-else-if="row.link_type === 1" type="success">商品详情</el-tag>
+            <el-tag v-else-if="row.link_type === 2" type="warning">分类页面</el-tag>
+            <el-tag v-else-if="row.link_type === 3" type="primary">自定义链接</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="链接/目标" min-width="150">
+          <template #default="{ row }">
+            <span v-if="row.link_type === 1 && row.target_id">商品ID: {{ row.target_id }}</span>
+            <span v-else-if="row.link_type === 2 && row.target_id">分类ID: {{ row.target_id }}</span>
+            <span v-else-if="row.link_type === 3 && row.link">{{ row.link }}</span>
+            <span v-else-if="row.link">{{ row.link }}</span>
+            <span v-else style="color: #999">无</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="sort" label="排序" width="80" />
         <el-table-column prop="status" label="状态" width="80">
           <template #default="{ row }">
@@ -43,6 +60,20 @@
         </el-form-item>
         <el-form-item label="链接地址">
           <el-input v-model="form.link" placeholder="请输入链接地址" />
+        </el-form-item>
+        <el-form-item label="链接类型">
+          <el-select v-model="form.link_type" placeholder="请选择链接类型" style="width: 100%">
+            <el-option label="不跳转" :value="0" />
+            <el-option label="商品详情" :value="1" />
+            <el-option label="分类页面" :value="2" />
+            <el-option label="自定义链接" :value="3" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="目标ID" v-if="form.link_type === 1 || form.link_type === 2">
+          <el-input-number v-model="form.target_id" :min="0" placeholder="商品ID或分类ID" style="width: 100%" />
+          <div style="font-size: 12px; color: #999; margin-top: 5px">
+            {{ form.link_type === 1 ? '请输入商品ID' : '请输入分类ID' }}
+          </div>
         </el-form-item>
         <el-form-item label="排序">
           <el-input-number v-model="form.sort" :min="0" />
@@ -77,6 +108,8 @@ const form = ref({
   title: '',
   image: '',
   link: '',
+  link_type: 0,
+  target_id: 0,
   sort: 0,
   status: 1
 })
@@ -92,7 +125,7 @@ const loadData = async () => {
 }
 
 const handleAdd = () => {
-  form.value = { title: '', image: '', link: '', sort: 0, status: 1 }
+  form.value = { title: '', image: '', link: '', link_type: 0, target_id: 0, sort: 0, status: 1 }
   isEdit.value = false
   dialogVisible.value = true
 }

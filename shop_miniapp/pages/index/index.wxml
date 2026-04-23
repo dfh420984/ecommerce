@@ -9,7 +9,7 @@
   <view class="banner-section">
     <swiper class="banner-swiper" indicator-dots autoplay circular>
       <swiper-item wx:for="{{banners}}" wx:key="id">
-        <image class="banner-image" src="{{item.image}}" mode="aspectFill" bindtap="onBannerTap" data-link="{{item.link}}" data-link-type="{{item.link_type}}" data-target-id="{{item.target_id}}" />
+        <image class="banner-image" src="{{item.image}}" mode="aspectFill" bindtap="onBannerTap" data-item="{{item}}" />
       </swiper-item>
     </swiper>
   </view>
