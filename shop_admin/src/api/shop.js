@@ -104,3 +104,35 @@ export function deleteBanner(id) {
     method: 'delete'
   })
 }
+
+// 订单管理
+export function getOrders(params) {
+  return request({
+    url: '/admin/orders',
+    method: 'get',
+    params
+  })
+}
+
+export function getOrder(id) {
+  return request({
+    url: `/admin/orders/${id}`,
+    method: 'get'
+  })
+}
+
+export function shipOrder(id, data) {
+  return request({
+    url: `/admin/orders/${id}/ship`,
+    method: 'put',
+    data
+  })
+}
+
+export function updateOrderStatus(id, data) {
+  return request({
+    url: `/admin/orders/${id}/status`,
+    method: 'put',
+    data
+  })
+}

@@ -87,25 +87,35 @@ func SetupRouter() *gin.Engine {
 			// 用户管理
 			adminAuth.GET("/users", handlers.GetUsers)
 			adminAuth.GET("/users/:id", handlers.GetUser)
+			adminAuth.PUT("/users/:id", handlers.UpdateUserInfo)
 			adminAuth.PUT("/users/:id/status", handlers.UpdateUserStatus)
 			adminAuth.DELETE("/users/:id", handlers.DeleteUser)
 
+			// 分类管理
 			adminAuth.GET("/categories", handlers.GetCategories)
 			adminAuth.GET("/categories/:id", handlers.GetCategory)
 			adminAuth.POST("/categories", handlers.CreateCategory)
 			adminAuth.PUT("/categories/:id", handlers.UpdateCategory)
 			adminAuth.DELETE("/categories/:id", handlers.DeleteCategory)
 
+			// 商品管理
 			adminAuth.GET("/products", handlers.GetProducts)
 			adminAuth.GET("/products/:id", handlers.GetProduct)
 			adminAuth.POST("/products", handlers.CreateProduct)
 			adminAuth.PUT("/products/:id", handlers.UpdateProduct)
 			adminAuth.DELETE("/products/:id", handlers.DeleteProduct)
 
+			// 轮播图管理
 			adminAuth.GET("/banners", handlers.GetBanners)
 			adminAuth.POST("/banners", handlers.CreateBanner)
 			adminAuth.PUT("/banners/:id", handlers.UpdateBanner)
 			adminAuth.DELETE("/banners/:id", handlers.DeleteBanner)
+
+			// 订单管理
+			adminAuth.GET("/orders", handlers.AdminGetOrders)
+			adminAuth.GET("/orders/:id", handlers.AdminGetOrder)
+			adminAuth.PUT("/orders/:id/ship", handlers.ShipOrder)
+			adminAuth.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
 		}
 	}
 

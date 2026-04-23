@@ -6,8 +6,8 @@ import (
 	"shop_api/database"
 	"shop_api/models"
 	"shop_api/services"
+	"shop_api/types"
 	"shop_api/utils"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -98,7 +98,7 @@ func mockPayAndRespond(c *gin.Context, order *models.Order, payType int8) {
 	}
 
 	tx := database.GetDB().Begin()
-	now := time.Now()
+	now := types.Now()
 
 	fullOrder.PayStatus = models.PayStatusPaid
 	fullOrder.PayType = payType
@@ -229,7 +229,7 @@ func MockPaySuccess(c *gin.Context) {
 	}
 
 	tx := database.GetDB().Begin()
-	now := time.Now()
+	now := types.Now()
 
 	order.PayStatus = models.PayStatusPaid
 	order.PayType = models.PayTypeWechat

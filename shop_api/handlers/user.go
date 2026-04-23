@@ -189,11 +189,11 @@ func AdminLogin(c *gin.Context) {
 	utils.Success(c, gin.H{
 		"token": token,
 		"user": gin.H{
-			"id":       user.ID,
-			"username": user.Username,
-			"nickname": user.Nickname,
-			"avatar":   user.Avatar,
-			"phone":    user.Phone,
+			"id":        user.ID,
+			"username":  user.Username,
+			"nickname":  user.Nickname,
+			"avatar":    user.Avatar,
+			"phone":     user.Phone,
 			"user_type": user.UserType,
 		},
 	})
@@ -316,7 +316,8 @@ func GetUsers(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
 	userType := c.Query("user_type")
 	status := c.Query("status")
-	keyword := c.Query("keyword")
+	username := c.Query("username")
+	phone := c.Query("phone")
 
 	if page < 1 {
 		page = 1
@@ -337,10 +338,14 @@ func GetUsers(c *gin.Context) {
 		query = query.Where("status = ?", status)
 	}
 
-	// 关键词搜索（用户名、昵称、手机号）
-	if keyword != "" {
-		query = query.Where("username LIKE ? OR nickname LIKE ? OR phone LIKE ?",
-			"%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%")
+	// 按用户名搜索
+	if username != "" {
+		query = query.Where("username LIKE ?", "%"+username+"%")
+	}
+
+	// 按手机号搜索
+	if phone != "" {
+		query = query.Where("phone LIKE ?", "%"+phone+"%")
 	}
 
 	var total int64

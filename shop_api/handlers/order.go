@@ -4,9 +4,9 @@ import (
 	"gorm.io/gorm"
 	"shop_api/database"
 	"shop_api/models"
+	"shop_api/types"
 	"shop_api/utils"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -249,7 +249,7 @@ func CancelOrder(c *gin.Context) {
 	}
 
 	order.OrderStatus = models.OrderStatusCancelled
-	now := time.Now()
+	now := types.Now()
 	order.CancelTime = &now
 
 	database.GetDB().Save(&order)
@@ -273,7 +273,7 @@ func ConfirmReceive(c *gin.Context) {
 	}
 
 	order.OrderStatus = models.OrderStatusReceived
-	now := time.Now()
+	now := types.Now()
 	order.CompleteTime = &now
 
 	database.GetDB().Save(&order)
@@ -300,4 +300,141 @@ func DeleteOrder(c *gin.Context) {
 	database.GetDB().Where("order_id = ?", order.ID).Delete(&models.OrderItem{})
 
 	utils.Success(c, nil)
+}
+
+// 以下后台管理接口
+
+// AdminGetOrders 后台获取订单列表
+func AdminGetOrders(c *gin.Context) {
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
+	orderNo := c.Query("order_no")
+	orderStatus, _ := strconv.Atoi(c.DefaultQuery("order_status", "0"))
+	payStatus, _ := strconv.Atoi(c.DefaultQuery("pay_status", "0"))
+
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 || pageSize > 100 {
+		pageSize = 10
+	}
+
+	query := database.GetDB().Model(&models.Order{})
+
+	// 订单号搜索
+	if orderNo != "" {
+		query = query.Where("order_no LIKE ?", "%"+orderNo+"%")
+	}
+
+	// 订单状态筛选
+	if orderStatus > 0 {
+		query = query.Where("order_status = ?", orderStatus)
+	}
+
+	// 支付状态筛选
+	if payStatus > 0 {
+		query = query.Where("pay_status = ?", payStatus)
+	}
+
+	var total int64
+	query.Count(&total)
+
+	var orders []models.Order
+	if err := query.Preload("User").Order("created_at DESC").
+		Offset((page - 1) * pageSize).
+		Limit(pageSize).
+		Find(&orders).Error; err != nil {
+		utils.Fail(c, "获取订单失败")
+		return
+	}
+
+	// 加载订单项
+	for i := range orders {
+		var items []models.OrderItem
+		database.GetDB().Where("order_id = ?", orders[i].ID).Find(&items)
+		orders[i].Items = items
+	}
+
+	utils.PageSuccess(c, orders, total, page, pageSize)
+}
+
+// AdminGetOrder 后台获取订单详情
+func AdminGetOrder(c *gin.Context) {
+	orderID := c.Param("id")
+
+	var order models.Order
+	if err := database.GetDB().Preload("User").First(&order, orderID).Error; err != nil {
+		utils.Fail(c, "订单不存在")
+		return
+	}
+
+	var items []models.OrderItem
+	database.GetDB().Where("order_id = ?", order.ID).Find(&items)
+	order.Items = items
+
+	utils.Success(c, order)
+}
+
+// ShipOrder 发货
+func ShipOrder(c *gin.Context) {
+	orderID := c.Param("id")
+
+	var input struct {
+		ExpressCompany string `json:"express_company"` // 快递公司
+		ExpressNo      string `json:"express_no"`      // 快递单号
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		utils.Fail(c, "参数错误")
+		return
+	}
+
+	var order models.Order
+	if err := database.GetDB().First(&order, orderID).Error; err != nil {
+		utils.Fail(c, "订单不存在")
+		return
+	}
+
+	if order.OrderStatus != models.OrderStatusPaid {
+		utils.Fail(c, "当前状态无法发货")
+		return
+	}
+
+	order.OrderStatus = models.OrderStatusShipped
+	order.ExpressCompany = input.ExpressCompany
+	order.ExpressNo = input.ExpressNo
+
+	database.GetDB().Save(&order)
+
+	utils.Success(c, order)
+}
+
+// UpdateOrderStatus 更新订单状态
+func UpdateOrderStatus(c *gin.Context) {
+	orderID := c.Param("id")
+
+	var input struct {
+		OrderStatus int8 `json:"order_status" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil {
+		utils.Fail(c, "参数错误")
+		return
+	}
+
+	var order models.Order
+	if err := database.GetDB().First(&order, orderID).Error; err != nil {
+		utils.Fail(c, "订单不存在")
+		return
+	}
+
+	order.OrderStatus = input.OrderStatus
+	now := types.Now()
+
+	// 如果状态变为已完成，记录完成时间
+	if input.OrderStatus == models.OrderStatusCompleted {
+		order.CompleteTime = &now
+	}
+
+	database.GetDB().Save(&order)
+
+	utils.Success(c, order)
 }

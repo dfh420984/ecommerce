@@ -135,6 +135,8 @@ CREATE TABLE `orders` (
   `district` VARCHAR(50) NOT NULL COMMENT '区县',
   `address` VARCHAR(255) NOT NULL COMMENT '详细地址',
   `remark` VARCHAR(500) DEFAULT '' COMMENT '订单备注',
+  `express_company` VARCHAR(100) DEFAULT '' COMMENT '快递公司',
+  `express_no` VARCHAR(100) DEFAULT '' COMMENT '快递单号',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `cancel_time` TIMESTAMP NULL COMMENT '取消时间',

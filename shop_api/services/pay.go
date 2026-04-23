@@ -11,11 +11,11 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"shop_api/config"
 	"shop_api/database"
 	"shop_api/models"
+	"shop_api/types"
 	"shop_api/utils"
 
 	"github.com/google/uuid"
@@ -124,7 +124,7 @@ func (s *WechatPayService) Notify(data []byte) (*WechatPayNotify, error) {
 
 	order.PayStatus = models.PayStatusPaid
 	order.PayType = models.PayTypeWechat
-	now := time.Now()
+	now := types.Now()
 	order.PayTime = &now
 	order.OrderStatus = models.OrderStatusPaid
 
@@ -245,7 +245,7 @@ func (s *AlipayService) Notify(data map[string]string) error {
 		if order.PayStatus == models.PayStatusUnpaid {
 			order.PayStatus = models.PayStatusPaid
 			order.PayType = models.PayTypeAlipay
-			now := time.Now()
+			now := types.Now()
 			order.PayTime = &now
 			order.OrderStatus = models.OrderStatusPaid
 
