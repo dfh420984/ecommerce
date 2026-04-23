@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="about-header">
+    <image class="logo" src="/static/logo.png" mode="aspectFit" />
+    <text class="app-name">电商小程序</text>
+    <text class="version">版本 1.0.0</text>
+  </view>
+
+  <view class="about-content">
+    <view class="info-item">
+      <text class="label">关于我们</text>
+      <text class="value">这是一款基于 Go + Vue3 + 微信小程序的电商系统</text>
+    </view>
+    <view class="info-item">
+      <text class="label">技术栈</text>
+      <text class="value">后端：Go + Gin + GORM\n前端：Vue3 + Element Plus\n小程序：原生微信小程序</text>
+    </view>
+    <view class="info-item">
+      <text class="label">联系方式</text>
+      <text class="value">邮箱：contact@example.com</text>
+    </view>
+  </view>
+</view>

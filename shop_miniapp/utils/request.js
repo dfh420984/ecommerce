@@ -72,6 +72,7 @@ const deleteOrder = (id) => request({ url: `/user/orders/${id}`, method: 'DELETE
 
 const getPayURL = (data) => request({ url: '/user/pay', method: 'POST', data })
 const getPayStatus = (id) => request({ url: `/user/pay/status/${id}` })
+const mockPaySuccess = (id) => request({ url: `/user/pay/mock_success/${id}`, method: 'POST' })
 const applyRefund = (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' })
 
 // 通用 GET 和 POST 方法
@@ -115,5 +116,6 @@ module.exports = {
   deleteOrder,
   getPayURL,
   getPayStatus,
+  mockPaySuccess,
   applyRefund
 }

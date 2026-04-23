@@ -77,9 +77,21 @@ Page({
 
   async onQuantityChange(e) {
     const { id } = e.currentTarget.dataset
-    const { value } = e.detail
+    const { type } = e.currentTarget.dataset
+    const currentItem = this.data.cartList.find(item => item.id === id)
+    if (!currentItem) return
+
+    let quantity = currentItem.quantity
+    if (type === 'minus') {
+      quantity = Math.max(1, quantity - 1)
+    } else if (type === 'plus') {
+      quantity = quantity + 1
+    } else {
+      quantity = Math.max(1, parseInt(e.detail.value, 10) || 1)
+    }
+
     try {
-      await api.updateCart(id, { quantity: value })
+      await api.updateCart(id, { quantity })
       this.loadCart()
     } catch (err) {
       console.error(err)
@@ -111,5 +123,9 @@ Page({
       return
     }
     wx.navigateTo({ url: '/pages/order/order?cart_ids=' + selectedItems.map(i => i.id).join(',') })
+  },
+
+  goShopping() {
+    wx.switchTab({ url: '/pages/index/index' })
   }
 })

@@ -8,7 +8,7 @@
   </view>
 
   <view class="order-list">
-    <view class="order-item" wx:for="{{orders}}" wx:key="id" bindtap="onOrderTap" data-orderno="{{item.order_no}}">
+    <view class="order-item" wx:for="{{orders}}" wx:key="id" bindtap="onOrderTap" data-orderid="{{item.id}}" data-status="{{item.order_status}}">
       <view class="order-header">
         <text class="order-no">订单号: {{item.order_no}}</text>
         <text class="order-status {{getStatusClass(item.order_status)}}">{{getStatusText(item.order_status)}}</text>

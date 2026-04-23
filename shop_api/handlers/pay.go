@@ -7,6 +7,7 @@ import (
 	"shop_api/models"
 	"shop_api/services"
 	"shop_api/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,7 +58,7 @@ func GetPayURL(c *gin.Context) {
 	}
 
 	utils.Success(c, gin.H{
-		"pay_url": payURL,
+		"pay_url":  payURL,
 		"order_no": order.OrderNo,
 	})
 }
@@ -101,6 +102,87 @@ func QueryPayStatus(c *gin.Context) {
 	}
 
 	utils.Success(c, gin.H{
+		"pay_status":   order.PayStatus,
+		"order_status": order.OrderStatus,
+	})
+}
+
+func MockPaySuccess(c *gin.Context) {
+	userID := utils.GetUserID(c)
+	orderID := c.Param("id")
+
+	var order models.Order
+	if err := database.GetDB().Preload("Items").Where("id = ? AND user_id = ?", orderID, userID).First(&order).Error; err != nil {
+		utils.Fail(c, "订单不存在")
+		return
+	}
+
+	if order.PayStatus != models.PayStatusUnpaid {
+		utils.Fail(c, "订单已支付")
+		return
+	}
+
+	tx := database.GetDB().Begin()
+	now := time.Now()
+
+	order.PayStatus = models.PayStatusPaid
+	order.PayType = models.PayTypeWechat
+	order.PayTime = &now
+	order.OrderStatus = models.OrderStatusPaid
+
+	for _, item := range order.Items {
+		var product models.Product
+		if err := tx.First(&product, item.ProductID).Error; err != nil {
+			tx.Rollback()
+			utils.Fail(c, "商品不存在")
+			return
+		}
+		if product.Stock < item.Quantity {
+			tx.Rollback()
+			utils.Fail(c, "商品["+item.ProductName+"]库存不足")
+			return
+		}
+		if err := tx.Model(&models.Product{}).Where("id = ?", item.ProductID).UpdateColumn("stock", tx.Raw("stock - ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			utils.Fail(c, "扣减库存失败")
+			return
+		}
+		if err := tx.Model(&models.Product{}).Where("id = ?", item.ProductID).UpdateColumn("sales", tx.Raw("sales + ?", item.Quantity)).Error; err != nil {
+			tx.Rollback()
+			utils.Fail(c, "更新销量失败")
+			return
+		}
+	}
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		utils.Fail(c, "更新订单失败")
+		return
+	}
+
+	payLog := models.PayLog{
+		OrderID:    order.ID,
+		OrderNo:    order.OrderNo,
+		TradeNo:    "mock_" + order.OrderNo,
+		PayType:    models.PayTypeWechat,
+		PayStatus:  models.PayStatusPaid,
+		PayAmount:  order.PayAmount,
+		NotifyData: `{"mock":true,"message":"dev pay success"}`,
+	}
+	if err := tx.Create(&payLog).Error; err != nil {
+		tx.Rollback()
+		utils.Fail(c, "记录支付日志失败")
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		utils.Fail(c, "模拟支付失败")
+		return
+	}
+
+	utils.Success(c, gin.H{
+		"order_id":     order.ID,
+		"order_no":     order.OrderNo,
 		"pay_status":   order.PayStatus,
 		"order_status": order.OrderStatus,
 	})

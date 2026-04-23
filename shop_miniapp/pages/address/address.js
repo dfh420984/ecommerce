@@ -35,10 +35,12 @@ Page({
     const { mode } = this.data
 
     if (mode === 'select') {
+      const selectedAddress = this.data.addresses.find(a => a.id === id)
+      this.setData({ selectedId: id })
       const pages = getCurrentPages()
       const prevPage = pages[pages.length - 2]
       if (prevPage) {
-        prevPage.setData({ selectedAddress: this.data.addresses.find(a => a.id === id) })
+        prevPage.setData({ selectedAddress })
       }
       wx.navigateBack()
     } else {

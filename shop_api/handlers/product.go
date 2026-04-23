@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"shop_api/database"
@@ -110,7 +111,14 @@ func GetCategory(c *gin.Context) {
 
 // GetSubCategories 获取子分类列表
 func GetSubCategories(c *gin.Context) {
-	parentID := c.Param("id")
+	parentIDStr := c.Param("id")
+
+	// 将字符串转换为 uint64
+	var parentID uint64
+	if _, err := fmt.Sscanf(parentIDStr, "%d", &parentID); err != nil {
+		utils.Fail(c, "无效的分类ID")
+		return
+	}
 
 	var categories []models.Category
 	if err := database.GetDB().Where("status = ? AND parent_id = ?", 1, parentID).Order("sort ASC, id ASC").Find(&categories).Error; err != nil {

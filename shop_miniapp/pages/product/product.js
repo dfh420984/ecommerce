@@ -15,10 +15,12 @@ Page({
       this.setData({ id: parseInt(options.id) })
       this.loadProduct()
     }
-    if (options.cart_ids) {
-      this.setData({ cart_ids: options.cart_ids.split(',').map(id => parseInt(id)) })
+  },
+
+  onShow() {
+    if (app.globalData.token) {
+      this.loadDefaultAddress()
     }
-    this.loadDefaultAddress()
   },
 
   async loadProduct() {
@@ -47,20 +49,40 @@ Page({
   },
 
   onAddressTap() {
-    wx.navigateTo({ url: '/pages/address/address?mode=select' })
+    const currentId = this.data.selectedAddress ? this.data.selectedAddress.id : ''
+    wx.navigateTo({ url: `/pages/address/address?mode=select&id=${currentId}` })
   },
 
   onQuantityChange(e) {
-    const { value } = e.detail
-    this.setData({ quantity: parseInt(value) || 1 })
+    const { type } = e.currentTarget.dataset
+    let quantity = this.data.quantity
+
+    if (type === 'minus') {
+      quantity = Math.max(1, quantity - 1)
+    } else if (type === 'plus') {
+      quantity = quantity + 1
+    } else {
+      quantity = parseInt(e.detail.value, 10) || 1
+    }
+
+    this.setData({ quantity })
   },
 
-  onAddCart() {
+  async onAddCart() {
     if (!app.globalData.token) {
       wx.navigateTo({ url: '/pages/login/login' })
       return
     }
-    this.createOrder(true)
+
+    try {
+      await api.addCart({
+        product_id: this.data.id,
+        quantity: this.data.quantity
+      })
+      wx.showToast({ title: '已加入购物车', icon: 'success' })
+    } catch (err) {
+      console.error(err)
+    }
   },
 
   onBuyNow() {
@@ -68,32 +90,8 @@ Page({
       wx.navigateTo({ url: '/pages/login/login' })
       return
     }
-    if (!this.data.selectedAddress) {
-      wx.showToast({ title: '请选择收货地址', icon: 'none' })
-      return
-    }
-    this.createOrder(false)
-  },
-
-  async createOrder(isCart) {
-    try {
-      let res
-      if (isCart) {
-        res = await api.addCart({
-          product_id: this.data.id,
-          quantity: this.data.quantity
-        })
-        wx.showToast({ title: '已加入购物车', icon: 'success' })
-      } else {
-        res = await api.createOrder({
-          address_id: this.data.selectedAddress.id,
-          product_id: this.data.id,
-          quantity: this.data.quantity
-        })
-        wx.navigateTo({ url: `/pages/pay/pay?order_no=${res.data.order_no}` })
-      }
-    } catch (err) {
-      console.error(err)
-    }
+    wx.navigateTo({
+      url: `/pages/order/order?product_id=${this.data.id}&quantity=${this.data.quantity}`
+    })
   }
 })

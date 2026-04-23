@@ -31,5 +31,19 @@ App({
     this.globalData.userInfo = null
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
+  },
+
+  // 检查登录状态，未登录则跳转登录页
+  checkLogin() {
+    if (!this.globalData.token) {
+      wx.navigateTo({ url: '/pages/login/login' })
+      return false
+    }
+    return true
+  },
+
+  // 退出登录
+  logout() {
+    this.clearSession()
   }
 })

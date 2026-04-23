@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="coupon-tabs">
+    <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="onTabChange" data-index="0">未使用</view>
+    <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="onTabChange" data-index="1">已使用</view>
+    <view class="tab-item {{activeTab === 2 ? 'active' : ''}}" bindtap="onTabChange" data-index="2">已过期</view>
+  </view>
+
+  <view class="coupon-list" wx:if="{{couponList.length > 0}}">
+    <view class="coupon-item" wx:for="{{couponList}}" wx:key="id">
+      <view class="coupon-left">
+        <view class="amount">
+          <text class="symbol">¥</text>
+          <text class="value">{{item.amount}}</text>
+        </view>
+        <view class="condition">满{{item.minAmount}}可用</view>
+      </view>
+      <view class="coupon-divider"></view>
+      <view class="coupon-right">
+        <text class="coupon-name">{{item.name}}</text>
+        <view class="coupon-info">
+          <text class="time">{{item.startTime}} - {{item.endTime}}</text>
+          <view class="status-tag {{item.status}}">{{item.statusText}}</view>
+        </view>
+        <view class="use-btn" wx:if="{{item.status === 'unused'}}" bindtap="onUseCoupon" data-id="{{item.id}}">
+          立即使用
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:else>
+    <image class="empty-icon" src="/static/empty.png" mode="aspectFit" />
+    <text class="empty-text">暂无优惠券</text>
+  </view>
+</view>

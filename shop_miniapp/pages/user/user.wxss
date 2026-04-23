@@ -127,3 +127,20 @@
   color: #ccc;
   font-size: 24rpx;
 }
+
+/* 退出登录按钮 */
+.logout-section {
+  margin: 40rpx 30rpx;
+}
+
+.logout-btn {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  text-align: center;
+}
+
+.logout-btn text {
+  color: #ff6b6b;
+  font-size: 28rpx;
+}

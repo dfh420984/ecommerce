@@ -70,6 +70,7 @@ func SetupRouter() *gin.Engine {
 
 			user.POST("/pay", handlers.GetPayURL)
 			user.GET("/pay/status/:id", handlers.QueryPayStatus)
+			user.POST("/pay/mock_success/:id", handlers.MockPaySuccess)
 			user.POST("/pay/refund/:id", handlers.ApplyRefund)
 		}
 

@@ -1,4 +1,4 @@
-const api = require('../../utils/request.js')
+const api = require('../../services/api.js')
 const app = getApp()
 
 Page({
@@ -44,5 +44,9 @@ Page({
 
   onWechatLogin() {
     wx.showToast({ title: '微信登录开发中', icon: 'none' })
+  },
+
+  onGoRegister() {
+    wx.navigateTo({ url: '/pages/register/register' })
   }
 })

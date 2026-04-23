@@ -8,10 +8,14 @@
     "pages/product-list/product-list",
     "pages/order/order",
     "pages/order-list/order-list",
+    "pages/order-detail/order-detail",
     "pages/address/address",
     "pages/address-form/address-form",
     "pages/login/login",
-    "pages/pay/pay"
+    "pages/pay/pay",
+    "pages/about/about",
+    "pages/coupon/coupon",
+    "pages/register/register"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffffff",

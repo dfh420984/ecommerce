@@ -23,6 +23,11 @@
     </view>
   </view>
 
+  <view class="action-section">
+    <view class="ghost-btn" bindtap="goOrderList">查看订单</view>
+    <view class="ghost-btn" bindtap="goHome">返回首页</view>
+  </view>
+
   <view class="pay-bar">
     <view class="pay-info">
       <text class="pay-label">实付:</text>

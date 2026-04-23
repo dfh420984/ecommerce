@@ -1,0 +1,58 @@
+.container {
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+.about-header {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+  padding: 80rpx 30rpx 60rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 30rpx;
+  background: #fff;
+  margin-bottom: 20rpx;
+}
+
+.app-name {
+  font-size: 36rpx;
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.version {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.about-content {
+  margin: 30rpx;
+}
+
+.info-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-item .label {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.info-item .value {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.8;
+}

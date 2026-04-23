@@ -1,6 +1,6 @@
 <view class="container">
   <view class="address-list">
-    <view class="address-item" wx:for="{{addresses}}" wx:key="id" bindtap="onAddressTap" data-id="{{item.id}}">
+    <view class="address-item {{mode === 'select' && selectedId === item.id ? 'address-item-selected' : ''}}" wx:for="{{addresses}}" wx:key="id" bindtap="onAddressTap" data-id="{{item.id}}">
       <view class="address-content">
         <view class="address-main">
           <text class="consignee">{{item.consignee}}</text>

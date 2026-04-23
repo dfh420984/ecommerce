@@ -1,51 +1,51 @@
-const { get, post } = require('../utils/request')
+const { request } = require('../utils/request')
 
-// 小程序 API
+// 小程序 API（方法需与后端路由保持一致）
 module.exports = {
   // 用户相关
-  register: (data) => post('/miniapp/register', data),
-  login: (data) => post('/miniapp/login', data),
-  wechatLogin: (data) => post('/miniapp/wechat_login', data),
-  getUserInfo: () => get('/user/info'),
-  updateUserInfo: (data) => post('/user/info', data),
+  register: (data) => request({ url: '/miniapp/register', method: 'POST', data }),
+  login: (data) => request({ url: '/miniapp/login', method: 'POST', data }),
+  wechatLogin: (data) => request({ url: '/miniapp/wechat_login', method: 'POST', data }),
+  getUserInfo: () => request({ url: '/user/info', method: 'GET' }),
+  updateUserInfo: (data) => request({ url: '/user/info', method: 'PUT', data }),
 
   // 商品相关
-  getBanners: () => get('/miniapp/banners'),
-  getCategories: () => get('/miniapp/categories'),
-  getSubCategories: (id) => get(`/miniapp/categories/${id}/sub`),
-  getProducts: (params) => get('/miniapp/products', params),
-  getRecommendProducts: () => get('/miniapp/products/recommend'),
-  getNewProducts: () => get('/miniapp/products/new'),
-  getProduct: (id) => get(`/miniapp/products/${id}`),
+  getBanners: () => request({ url: '/miniapp/banners', method: 'GET' }),
+  getCategories: () => request({ url: '/miniapp/categories', method: 'GET' }),
+  getSubCategories: (id) => request({ url: `/miniapp/categories/${id}/sub`, method: 'GET' }),
+  getProducts: (params) => request({ url: '/miniapp/products', method: 'GET', data: params }),
+  getRecommendProducts: () => request({ url: '/miniapp/products/recommend', method: 'GET' }),
+  getNewProducts: () => request({ url: '/miniapp/products/new', method: 'GET' }),
+  getProduct: (id) => request({ url: `/miniapp/products/${id}`, method: 'GET' }),
 
   // 购物车相关
-  getCart: () => get('/user/cart'),
-  getCartCount: () => get('/user/cart/count'),
-  addCart: (data) => post('/user/cart', data),
-  updateCart: (id, data) => post(`/user/cart/${id}`, data),
-  selectCart: (id, data) => post(`/user/cart/${id}/select`, data),
-  selectAllCart: (data) => post('/user/cart/select_all', data),
-  deleteCart: (id) => post(`/user/cart/${id}`),
-  clearCart: () => post('/user/cart'),
+  getCart: () => request({ url: '/user/cart', method: 'GET' }),
+  getCartCount: () => request({ url: '/user/cart/count', method: 'GET' }),
+  addCart: (data) => request({ url: '/user/cart', method: 'POST', data }),
+  updateCart: (id, data) => request({ url: `/user/cart/${id}`, method: 'PUT', data }),
+  selectCart: (id, data) => request({ url: `/user/cart/${id}/select`, method: 'PUT', data }),
+  selectAllCart: (data) => request({ url: '/user/cart/select_all', method: 'PUT', data }),
+  deleteCart: (id) => request({ url: `/user/cart/${id}`, method: 'DELETE' }),
+  clearCart: () => request({ url: '/user/cart', method: 'DELETE' }),
 
   // 地址相关
-  getAddresses: () => get('/user/addresses'),
-  getAddress: (id) => get(`/user/addresses/${id}`),
-  createAddress: (data) => post('/user/addresses', data),
-  updateAddress: (id, data) => post(`/user/addresses/${id}`, data),
-  deleteAddress: (id) => post(`/user/addresses/${id}`),
-  setDefaultAddress: (id) => post(`/user/addresses/${id}/default`),
+  getAddresses: () => request({ url: '/user/addresses', method: 'GET' }),
+  getAddress: (id) => request({ url: `/user/addresses/${id}`, method: 'GET' }),
+  createAddress: (data) => request({ url: '/user/addresses', method: 'POST', data }),
+  updateAddress: (id, data) => request({ url: `/user/addresses/${id}`, method: 'PUT', data }),
+  deleteAddress: (id) => request({ url: `/user/addresses/${id}`, method: 'DELETE' }),
+  setDefaultAddress: (id) => request({ url: `/user/addresses/${id}/default`, method: 'PUT' }),
 
   // 订单相关
-  getOrders: (params) => get('/user/orders', params),
-  getOrder: (id) => get(`/user/orders/${id}`),
-  createOrder: (data) => post('/user/orders', data),
-  cancelOrder: (id) => post(`/user/orders/${id}/cancel`),
-  confirmReceive: (id) => post(`/user/orders/${id}/confirm`),
-  deleteOrder: (id) => post(`/user/orders/${id}`),
+  getOrders: (params) => request({ url: '/user/orders', method: 'GET', data: params }),
+  getOrder: (id) => request({ url: `/user/orders/${id}`, method: 'GET' }),
+  createOrder: (data) => request({ url: '/user/orders', method: 'POST', data }),
+  cancelOrder: (id) => request({ url: `/user/orders/${id}/cancel`, method: 'PUT' }),
+  confirmReceive: (id) => request({ url: `/user/orders/${id}/confirm`, method: 'PUT' }),
+  deleteOrder: (id) => request({ url: `/user/orders/${id}`, method: 'DELETE' }),
 
   // 支付相关
-  getPayURL: (data) => post('/user/pay', data),
-  queryPayStatus: (id) => get(`/user/pay/status/${id}`),
-  applyRefund: (id, data) => post(`/user/pay/refund/${id}`, data)
+  getPayURL: (data) => request({ url: '/user/pay', method: 'POST', data }),
+  queryPayStatus: (id) => request({ url: `/user/pay/status/${id}`, method: 'GET' }),
+  applyRefund: (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' })
 }

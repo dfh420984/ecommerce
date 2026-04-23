@@ -62,9 +62,20 @@ Page({
     }
   },
 
+  onTabChange(e) {
+    const { status } = e.currentTarget.dataset
+    this.setData({
+      status: parseInt(status),
+      orders: [],
+      page: 1,
+      hasMore: true
+    })
+    this.loadOrders()
+  },
+
   onOrderTap(e) {
-    const { orderno } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/order-list/order-list?order_no=${orderno}` })
+    const { orderid } = e.currentTarget.dataset
+    wx.navigateTo({ url: `/pages/order-detail/order-detail?id=${orderid}` })
   },
 
   getStatusText(status) {

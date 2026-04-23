@@ -17,6 +17,6 @@
 
   <view class="register-tip">
     <text>还没有账号?</text>
-    <text class="register-link">立即注册</text>
+    <text class="register-link" bindtap="onGoRegister">立即注册</text>
   </view>
 </view>

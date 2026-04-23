@@ -1,21 +1,22 @@
-const api = require('../../utils/request.js')
+const api = require('../../services/api.js')
 const image = require('../../utils/image')
 const app = getApp()
 
 Page({
   data: {
     userInfo: null,
+    isLoggedIn: false,
     menuItems: [
       [
         { icon: '/static/user/order.png', text: '全部订单', url: '/pages/order-list/order-list' }
       ],
       [
         { icon: '/static/user/address.png', text: '收货地址', url: '/pages/address/address' },
-        { icon: '/static/user/coupon.png', text: '优惠券', url: '' }
+        { icon: '/static/user/coupon.png', text: '优惠券', url: '/pages/coupon/coupon' }
       ],
       [
         { icon: '/static/user/help.png', text: '帮助中心', url: '' },
-        { icon: '/static/user/about.png', text: '关于我们', url: '' }
+        { icon: '/static/user/about.png', text: '关于我们', url: '/pages/about/about' }
       ]
     ],
     orderCounts: {
@@ -27,17 +28,28 @@ Page({
   },
 
   onLoad() {
-    const userInfo = app.globalData.userInfo
-    this.setData({ userInfo })
+    this.checkLoginStatus()
   },
 
   onShow() {
+    this.checkLoginStatus()
     if (app.globalData.token) {
       this.loadUserInfo()
       this.loadOrderCounts()
     }
   },
 
+  // 检查登录状态
+  checkLoginStatus() {
+    const token = app.globalData.token
+    const userInfo = app.globalData.userInfo
+    this.setData({
+      isLoggedIn: !!token,
+      userInfo: userInfo || null
+    })
+  },
+
+  // 加载用户信息
   async loadUserInfo() {
     try {
       const res = await api.getUserInfo()
@@ -49,10 +61,11 @@ Page({
       app.setUserInfo(userInfo)
       this.setData({ userInfo })
     } catch (err) {
-      console.error(err)
+      console.error('加载用户信息失败:', err)
     }
   },
 
+  // 加载订单数量统计
   async loadOrderCounts() {
     try {
       const res = await api.getOrders({ page: 1, page_size: 100 })
@@ -65,35 +78,56 @@ Page({
       }
       this.setData({ orderCounts: counts })
     } catch (err) {
-      console.error(err)
+      console.error('加载订单统计失败:', err)
     }
   },
 
+  // 点击登录
+  onLoginTap() {
+    if (!app.globalData.token) {
+      wx.navigateTo({ url: '/pages/login/login' })
+    }
+  },
+
+  // 订单状态点击
+  onOrderStatusTap(e) {
+    if (!app.checkLogin()) return
+    const { status } = e.currentTarget.dataset
+    wx.navigateTo({ url: `/pages/order-list/order-list?status=${status}` })
+  },
+
+  // 菜单项点击
   onMenuTap(e) {
     const { url } = e.currentTarget.dataset
     if (!url) {
       wx.showToast({ title: '功能开发中', icon: 'none' })
       return
     }
-    if (!app.globalData.token) {
-      wx.navigateTo({ url: '/pages/login/login' })
-      return
-    }
+    if (!app.checkLogin()) return
     wx.navigateTo({ url })
   },
 
-  onOrderStatusTap(e) {
-    const { status } = e.currentTarget.dataset
-    if (!app.globalData.token) {
-      wx.navigateTo({ url: '/pages/login/login' })
-      return
-    }
-    wx.navigateTo({ url: `/pages/order-list/order-list?status=${status}` })
-  },
-
-  onLoginTap() {
-    if (!app.globalData.token) {
-      wx.navigateTo({ url: '/pages/login/login' })
-    }
+  // 退出登录
+  onLogout() {
+    wx.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          app.logout()
+          this.setData({
+            userInfo: null,
+            isLoggedIn: false,
+            orderCounts: {
+              pending: 0,
+              paid: 0,
+              shipped: 0,
+              received: 0
+            }
+          })
+          wx.showToast({ title: '已退出登录', icon: 'success' })
+        }
+      }
+    })
   }
 })
