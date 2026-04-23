@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"gorm.io/gorm"
 	"shop_api/database"
 	"shop_api/models"
 	"shop_api/utils"
@@ -35,9 +36,9 @@ func CreateOrder(c *gin.Context) {
 
 	var items []models.OrderItem
 	var totalAmount float64
+	var carts []models.Cart // 提前声明，用于后续减少库存
 
 	if len(input.CartIDs) > 0 {
-		var carts []models.Cart
 		if err := database.GetDB().Preload("Product").Where("id IN ? AND user_id = ? AND selected = ?", input.CartIDs, userID, 1).Find(&carts).Error; err != nil {
 			utils.Fail(c, "购物车商品不存在")
 			return
@@ -123,7 +124,8 @@ func CreateOrder(c *gin.Context) {
 
 	if err := tx.Create(&order).Error; err != nil {
 		tx.Rollback()
-		utils.Fail(c, "创建订单失败")
+		utils.Error("创建订单失败: %v", err)
+		utils.Fail(c, "创建订单失败: "+err.Error())
 		return
 	}
 
@@ -133,15 +135,38 @@ func CreateOrder(c *gin.Context) {
 
 	if err := tx.Create(&items).Error; err != nil {
 		tx.Rollback()
-		utils.Fail(c, "创建订单明细失败")
+		utils.Error("创建订单明细失败: %v", err)
+		utils.Fail(c, "创建订单明细失败: "+err.Error())
 		return
 	}
 
-	if len(input.CartIDs) > 0 {
-		database.GetDB().Where("id IN ? AND user_id = ?", input.CartIDs, userID).Delete(&models.Cart{})
+	// 减少商品库存
+	for _, cart := range carts {
+		if cart.Product != nil {
+			if err := tx.Model(&models.Product{}).Where("id = ?", cart.ProductID).UpdateColumn("stock", gorm.Expr("stock - ?", cart.Quantity)).Error; err != nil {
+				tx.Rollback()
+				utils.Error("更新库存失败: %v", err)
+				utils.Fail(c, "更新库存失败")
+				return
+			}
+		}
 	}
 
-	tx.Commit()
+	// 使用事务删除购物车
+	if len(input.CartIDs) > 0 {
+		if err := tx.Where("id IN ? AND user_id = ?", input.CartIDs, userID).Delete(&models.Cart{}).Error; err != nil {
+			tx.Rollback()
+			utils.Error("删除购物车失败: %v", err)
+			// 删除购物车失败不影响订单创建，只记录日志
+			utils.Info("删除购物车失败，但订单已创建: %v", err)
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		utils.Error("事务提交失败: %v", err)
+		utils.Fail(c, "订单创建失败，请稍后重试")
+		return
+	}
 
 	utils.Success(c, gin.H{
 		"order_id":   order.ID,

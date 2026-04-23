@@ -33,6 +33,28 @@
   color: #999;
 }
 
+/* 已支付标识 */
+.paid-badge {
+  margin-top: 20rpx;
+  display: inline-flex;
+  align-items: center;
+  background: #52c41a;
+  color: #fff;
+  padding: 8rpx 20rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+}
+
+.badge-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+  font-weight: bold;
+}
+
+.badge-text {
+  font-size: 26rpx;
+}
+
 .pay-section {
   background: #fff;
   padding: 30rpx;
@@ -72,36 +94,69 @@
 .pay-type-item {
   display: flex;
   align-items: center;
-  padding: 30rpx 0;
+  justify-content: space-between;
+  padding: 30rpx 20rpx;
   border-bottom: 1rpx solid #f0f0f0;
+  transition: all 0.3s;
+}
+
+.pay-type-item:active {
+  opacity: 0.7;
 }
 
 .pay-type-item:last-child {
   border-bottom: none;
 }
 
+.pay-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
 .pay-icon {
   width: 60rpx;
   height: 60rpx;
   margin-right: 20rpx;
+  flex-shrink: 0;
 }
 
 .pay-name {
-  flex: 1;
   font-size: 28rpx;
   color: #333;
 }
 
+.pay-type-item.selected .pay-name {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
 .pay-check {
-  width: 40rpx;
-  height: 40rpx;
+  width: 44rpx;
+  height: 44rpx;
   border: 2rpx solid #ddd;
   border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: 20rpx;
 }
 
 .pay-type-item.selected .pay-check {
   background: #ff6b6b;
   border-color: #ff6b6b;
+  position: relative;
+}
+
+.pay-type-item.selected .pay-check::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 8rpx;
+  height: 16rpx;
+  border-right: 3rpx solid #fff;
+  border-bottom: 3rpx solid #fff;
+  margin-top: -2rpx;
 }
 
 .pay-bar {
@@ -139,6 +194,27 @@
   height: 70rpx;
   line-height: 70rpx;
   background: #ff6b6b;
+  color: #fff;
+  font-size: 30rpx;
+  text-align: center;
+  border-radius: 35rpx;
+}
+
+.pay-btn.disabled {
+  background: #ccc;
+  opacity: 0.6;
+}
+
+/* 已支付状态下的按钮 */
+.paid-bar {
+  justify-content: center;
+}
+
+.view-order-btn {
+  width: 400rpx;
+  height: 70rpx;
+  line-height: 70rpx;
+  background: #52c41a;
   color: #fff;
   font-size: 30rpx;
   text-align: center;

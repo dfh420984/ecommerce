@@ -1,6 +1,9 @@
 <view class="container">
   <view class="search-bar">
-    <input class="search-input" placeholder="搜索商品" disabled />
+    <view class="search-input-wrapper" bindtap="onSearchTap">
+      <text class="search-icon">🔍</text>
+      <text class="search-placeholder">搜索商品</text>
+    </view>
   </view>
 
   <view class="banner-section">

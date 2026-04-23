@@ -99,6 +99,81 @@
   font-size: 28rpx;
 }
 
+.product-content {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.content-html {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.content-html {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.content-html img,
+.content-html p,
+.content-html h1,
+.content-html h2,
+.content-html h3,
+.content-html div,
+.content-html span,
+.content-html ul,
+.content-html ol,
+.content-html li {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.content-html img {
+  max-width: 100%;
+  height: auto;
+  margin: 20rpx 0;
+}
+
+/* 视频样式 */
+.content-video {
+  width: 100%;
+  margin: 20rpx 0;
+  border-radius: 8rpx;
+}
+
+.content-html p {
+  margin: 15rpx 0;
+}
+
+.content-html h1,
+.content-html h2,
+.content-html h3 {
+  font-weight: bold;
+  margin: 25rpx 0 15rpx 0;
+  color: #333;
+}
+
+.content-html h1 {
+  font-size: 32rpx;
+}
+
+.content-html h2 {
+  font-size: 30rpx;
+}
+
+.content-html h3 {
+  font-size: 28rpx;
+}
+
+.no-content {
+  font-size: 28rpx;
+  color: #999;
+  text-align: center;
+  padding: 40rpx 0;
+}
+
 .quantity-section {
   background: #fff;
   padding: 30rpx;

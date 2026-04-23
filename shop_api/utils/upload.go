@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"shop_api/config"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,16 @@ func UploadFile(c *gin.Context, dir string) (string, error) {
 		return "", err
 	}
 
-	return "/uploads/" + filename, nil
+	// 获取服务器配置
+	cfg := config.Get()
+	relativePath := "/uploads/" + filename
+
+	// 如果配置了 server_url，返回完整 URL；否则返回相对路径
+	if cfg != nil && cfg.App.ServerURL != "" {
+		return cfg.App.ServerURL + relativePath, nil
+	}
+
+	return relativePath, nil
 }
 
 func UploadFiles(c *gin.Context, dir string) ([]string, error) {
@@ -36,6 +46,13 @@ func UploadFiles(c *gin.Context, dir string) ([]string, error) {
 		files = form.File["file"]
 	}
 
+	// 获取服务器配置
+	cfg := config.Get()
+	serverURL := ""
+	if cfg != nil && cfg.App.ServerURL != "" {
+		serverURL = cfg.App.ServerURL
+	}
+
 	var paths []string
 	for _, file := range files {
 		ext := "." + GetFileExt(file.Filename)
@@ -45,7 +62,14 @@ func UploadFiles(c *gin.Context, dir string) ([]string, error) {
 		if err := c.SaveUploadedFile(file, dst); err != nil {
 			return nil, err
 		}
-		paths = append(paths, "/uploads/"+filename)
+
+		relativePath := "/uploads/" + filename
+		// 如果配置了 server_url，返回完整 URL；否则返回相对路径
+		if serverURL != "" {
+			paths = append(paths, serverURL+relativePath)
+		} else {
+			paths = append(paths, relativePath)
+		}
 	}
 
 	return paths, nil

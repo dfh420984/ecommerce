@@ -288,6 +288,34 @@ func (s *PayService) GetAlipayURL(order *models.Order) (string, error) {
 	return s.alipay.TradePagePay(order)
 }
 
+// IsWechatConfigured 检查微信支付是否已配置
+func (s *PayService) IsWechatConfigured() bool {
+	cfg := config.Get()
+	if cfg == nil {
+		return false
+	}
+	// 检查必要字段是否还是默认占位符
+	return cfg.Wechat.AppID != "" &&
+		cfg.Wechat.AppID != "your-wechat-appid" &&
+		cfg.Wechat.MchID != "" &&
+		cfg.Wechat.MchID != "your-wechat-mchid" &&
+		cfg.Wechat.APIKey != "" &&
+		cfg.Wechat.APIKey != "your-wechat-apikey"
+}
+
+// IsAlipayConfigured 检查支付宝是否已配置
+func (s *PayService) IsAlipayConfigured() bool {
+	cfg := config.Get()
+	if cfg == nil {
+		return false
+	}
+	// 检查必要字段是否还是默认占位符
+	return cfg.Alipay.AppID != "" &&
+		cfg.Alipay.AppID != "your-alipay-appid" &&
+		cfg.Alipay.PrivateKey != "" &&
+		cfg.Alipay.PrivateKey != "your-alipay-private-key"
+}
+
 func (s *PayService) WechatNotify(data []byte) error {
 	_, err := s.wechat.Notify(data)
 	return err

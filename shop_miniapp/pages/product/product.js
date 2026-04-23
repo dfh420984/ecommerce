@@ -1,5 +1,6 @@
 const api = require('../../utils/request.js')
 const image = require('../../utils/image')
+const util = require('../../utils/util.js')
 const app = getApp()
 
 Page({
@@ -7,7 +8,8 @@ Page({
     id: null,
     product: null,
     quantity: 1,
-    selectedAddress: null
+    selectedAddress: null,
+    contentSegments: [] // 富文本内容片段（包含视频和HTML）
   },
 
   onLoad(options) {
@@ -31,9 +33,35 @@ Page({
       if (product.images) {
         product.images = image.formatImageUrls(product.images)
       }
-      this.setData({ product })
+      
+      // 解析富文本内容，提取视频
+      let contentSegments = []
+      if (product.content) {
+        console.log('原始富文本内容:', product.content)
+        contentSegments = util.parseRichContent(product.content)
+        console.log('解析后的内容片段:', contentSegments)
+        
+        // 格式化视频URL
+        contentSegments = contentSegments.map(segment => {
+          if (segment.type === 'video') {
+            const formattedSegment = {
+              ...segment,
+              src: image.formatImageUrl(segment.src),
+              poster: segment.poster ? image.formatImageUrl(segment.poster) : ''
+            }
+            console.log('格式化后的视频片段:', formattedSegment)
+            return formattedSegment
+          }
+          return segment
+        })
+      }
+      
+      this.setData({ 
+        product,
+        contentSegments
+      })
     } catch (err) {
-      console.error(err)
+      console.error('加载商品详情失败:', err)
     }
   },
 

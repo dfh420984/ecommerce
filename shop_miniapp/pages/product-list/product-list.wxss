@@ -4,6 +4,38 @@
   flex-direction: column;
 }
 
+.search-bar {
+  padding: 20rpx 30rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.search-input-wrapper {
+  height: 70rpx;
+  background: #f0f0f0;
+  border-radius: 35rpx;
+  padding: 0 30rpx;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  font-size: 32rpx;
+  margin-right: 15rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  height: 100%;
+}
+
+.search-clear {
+  font-size: 32rpx;
+  color: #999;
+  padding: 0 10rpx;
+}
+
 .page-title {
   padding: 30rpx;
   background: #fff;

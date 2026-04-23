@@ -86,7 +86,15 @@ Page({
 
   onCategoryTap(e) {
     const { id } = e.currentTarget.dataset
-    wx.navigateTo({ url: `/pages/product/product?category_id=${id}` })
+    // 将选中的分类ID存储到全局变量
+    app.globalData.selectedCategoryId = id
+    // 使用 switchTab 跳转到分类页面
+    wx.switchTab({ url: '/pages/category/category' })
+  },
+
+  onSearchTap() {
+    // 跳转到商品列表页面，显示搜索框
+    wx.navigateTo({ url: '/pages/product-list/product-list?type=search' })
   },
 
   onProductTap(e) {

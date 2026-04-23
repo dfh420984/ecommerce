@@ -1,6 +1,15 @@
 <view class="container">
+  <!-- 搜索框 -->
+  <view class="search-bar" wx:if="{{type === 'search'}}">
+    <view class="search-input-wrapper">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索商品" value="{{keyword}}" bindinput="onSearchInput" bindconfirm="onSearchConfirm" />
+      <text class="search-clear" wx:if="{{keyword}}" bindtap="onClearSearch">✕</text>
+    </view>
+  </view>
+
   <!-- 页面标题 -->
-  <view class="page-title">
+  <view class="page-title" wx:if="{{type !== 'search'}}">
     <text>{{title}}</text>
   </view>
   

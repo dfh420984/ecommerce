@@ -10,7 +10,8 @@ Page({
       { id: 2, name: '支付宝', icon: '/static/pay/alipay.png' }
     ],
     selectedPayType: 1,
-    paying: false
+    paying: false,
+    paid: false // 是否已支付
   },
 
   onLoad(options) {
@@ -30,7 +31,9 @@ Page({
       const res = await api.getOrder(this.data.orderId)
       this.setData({
         order: res.data,
-        orderNo: res.data.order_no
+        orderNo: res.data.order_no,
+        // 如果订单已支付，更新状态
+        paid: res.data.pay_status === 1
       })
     } catch (err) {
       console.error(err)
@@ -39,11 +42,16 @@ Page({
 
   onPayTypeChange(e) {
     const { id } = e.currentTarget.dataset
-    this.setData({ selectedPayType: id })
+    console.log('切换支付方式:', id)
+    this.setData({ 
+      selectedPayType: parseInt(id)
+    }, () => {
+      console.log('当前选中支付方式:', this.data.selectedPayType)
+    })
   },
 
   async onPay() {
-    if (this.data.paying || !this.data.order) return
+    if (this.data.paying || this.data.paid || !this.data.order) return
 
     this.setData({ paying: true })
     try {
@@ -52,26 +60,34 @@ Page({
         pay_type: this.data.selectedPayType
       })
 
-      if (res.data.pay_url) {
+      // 检查是否是模拟支付
+      if (res.data.mock_pay) {
+        // 模拟支付成功
+        wx.showToast({ 
+          title: '支付成功', 
+          icon: 'success',
+          duration: 2000
+        })
+        
+        // 更新页面状态
+        this.setData({ 
+          paid: true,
+          paying: false 
+        })
+        
+        // 延迟跳转至订单详情页
+        setTimeout(() => {
+          wx.redirectTo({ 
+            url: `/pages/order-detail/order-detail?id=${this.data.order.id}` 
+          })
+        }, 2000)
+      } else if (res.data.pay_url) {
+        // 真实支付，显示二维码或跳转
         wx.showModal({
-          title: '开发环境支付',
-          content: '已生成支付链接。是否直接模拟支付成功，并将订单状态切换为待发货？',
-          confirmText: '模拟成功',
-          cancelText: '稍后支付',
-          success: async (modalRes) => {
-            if (modalRes.confirm) {
-              try {
-                await api.mockPaySuccess(this.data.order.id)
-                wx.showToast({ title: '支付成功', icon: 'success' })
-                setTimeout(() => {
-                  wx.redirectTo({ url: `/pages/order-detail/order-detail?id=${this.data.order.id}` })
-                }, 800)
-              } catch (mockErr) {
-                console.error(mockErr)
-              }
-            }
-          },
-          complete: () => {
+          title: '提示',
+          content: '请扫描支付二维码完成支付',
+          showCancel: false,
+          success: () => {
             this.setData({ paying: false })
           }
         })
@@ -80,7 +96,11 @@ Page({
         this.setData({ paying: false })
       }
     } catch (err) {
-      console.error(err)
+      console.error('支付失败:', err)
+      wx.showToast({ 
+        title: err.msg || '支付失败', 
+        icon: 'none' 
+      })
       this.setData({ paying: false })
     }
   },
@@ -91,5 +111,11 @@ Page({
 
   goHome() {
     wx.switchTab({ url: '/pages/index/index' })
+  },
+
+  goOrderDetail() {
+    wx.redirectTo({ 
+      url: `/pages/order-detail/order-detail?id=${this.data.order.id}` 
+    })
   }
 })

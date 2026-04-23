@@ -18,13 +18,14 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Name      string `yaml:"name"`
-	Host      string `yaml:"host"`
-	Port      int    `yaml:"port"`
-	Mode      string `yaml:"mode"`
+	Name       string `yaml:"name"`
+	Host       string `yaml:"host"`
+	Port       int    `yaml:"port"`
+	Mode       string `yaml:"mode"`
 	UploadPath string `yaml:"upload_path"`
-	JWTSecret string `yaml:"jwt_secret"`
-	JWTExpire int    `yaml:"jwt_expire"`
+	ServerURL  string `yaml:"server_url"`
+	JWTSecret  string `yaml:"jwt_secret"`
+	JWTExpire  int    `yaml:"jwt_expire"`
 }
 
 type DatabaseConfig struct {

@@ -72,7 +72,8 @@ func SHA256(str string) string {
 
 func GenerateOrderNo() string {
 	now := time.Now()
-	return fmt.Sprintf("%s%s%s%s%s",
+	// 订单号格式：年月日时分(10位) + 随机数字(4位) + 随机字母(4位) = 18位
+	return fmt.Sprintf("%s%s%s",
 		now.Format("2006010215"),
 		randString(4, "0123456789"),
 		randString(4, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"),

@@ -4,7 +4,8 @@ App({
     imageUrl: 'http://localhost:8686',  // 图片基础 URL
     userInfo: null,
     token: null,
-    categoryType: '' // 分类页面类型：'recommend' 或 'new' 或空
+    categoryType: '', // 分类页面类型：'recommend' 或 'new' 或空
+    selectedCategoryId: null // 从首页选中的分类ID
   },
 
   onLaunch() {

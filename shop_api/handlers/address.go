@@ -9,14 +9,14 @@ import (
 )
 
 type AddressInput struct {
-	Consignee  string `json:"consignee" binding:"required"`
-	Phone      string `json:"phone" binding:"required"`
-	Province   string `json:"province" binding:"required"`
-	City       string `json:"city" binding:"required"`
-	District   string `json:"district" binding:"required"`
-	Address    string `json:"address" binding:"required"`
-	PostalCode string `json:"postal_code"`
-	IsDefault  int8   `json:"is_default"`
+	Consignee  string   `json:"consignee" binding:"required"`
+	Phone      string   `json:"phone" binding:"required"`
+	Province   []string `json:"province" binding:"required"`
+	City       []string `json:"city" binding:"required"`
+	District   []string `json:"district" binding:"required"`
+	Address    string   `json:"address" binding:"required"`
+	PostalCode string   `json:"postal_code"`
+	IsDefault  int8     `json:"is_default"`
 }
 
 func GetAddresses(c *gin.Context) {
@@ -57,13 +57,27 @@ func CreateAddress(c *gin.Context) {
 		database.GetDB().Model(&models.Address{}).Where("user_id = ?", userID).Update("is_default", 0)
 	}
 
+	// 处理地址数组
+	province := ""
+	if len(input.Province) > 0 {
+		province = input.Province[len(input.Province)-1]
+	}
+	city := ""
+	if len(input.City) > 0 {
+		city = input.City[len(input.City)-1]
+	}
+	district := ""
+	if len(input.District) > 0 {
+		district = input.District[len(input.District)-1]
+	}
+
 	address := models.Address{
 		UserID:     userID,
 		Consignee:  input.Consignee,
 		Phone:      input.Phone,
-		Province:   input.Province,
-		City:       input.City,
-		District:   input.District,
+		Province:   province,
+		City:       city,
+		District:   district,
 		Address:    input.Address,
 		PostalCode: input.PostalCode,
 		IsDefault:  input.IsDefault,
@@ -83,7 +97,7 @@ func UpdateAddress(c *gin.Context) {
 
 	var input AddressInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		utils.Fail(c, "参数错误")
+		utils.Fail(c, "参数错误: "+err.Error())
 		return
 	}
 
@@ -97,11 +111,25 @@ func UpdateAddress(c *gin.Context) {
 		database.GetDB().Model(&models.Address{}).Where("user_id = ?", userID).Update("is_default", 0)
 	}
 
+	// 处理地址数组
+	province := ""
+	if len(input.Province) > 0 {
+		province = input.Province[len(input.Province)-1]
+	}
+	city := ""
+	if len(input.City) > 0 {
+		city = input.City[len(input.City)-1]
+	}
+	district := ""
+	if len(input.District) > 0 {
+		district = input.District[len(input.District)-1]
+	}
+
 	address.Consignee = input.Consignee
 	address.Phone = input.Phone
-	address.Province = input.Province
-	address.City = input.City
-	address.District = input.District
+	address.Province = province
+	address.City = city
+	address.District = district
 	address.Address = input.Address
 	address.PostalCode = input.PostalCode
 	address.IsDefault = input.IsDefault

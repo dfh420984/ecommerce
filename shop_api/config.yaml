@@ -4,6 +4,7 @@ app:
   port: 8686
   mode: debug
   upload_path: ./uploads
+  server_url: http://localhost:8686
   jwt_secret: your-jwt-secret-key-change-in-production
   jwt_expire: 72
 

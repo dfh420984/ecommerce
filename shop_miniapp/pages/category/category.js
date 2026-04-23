@@ -22,7 +22,20 @@ Page({
   },
 
   onShow() {
-    // 分类页面只负责分类浏览
+    // 检查是否有从首页传递过来的分类ID
+    if (app.globalData.selectedCategoryId) {
+      const categoryId = app.globalData.selectedCategoryId
+      // 清除全局变量，避免重复触发
+      app.globalData.selectedCategoryId = null
+      
+      // 等待分类加载完成后再设置选中状态
+      if (this.data.categories.length > 0) {
+        this.selectCategoryFromHome(categoryId)
+      } else {
+        // 如果分类还未加载，在 loadCategories 完成后处理
+        this.pendingCategoryId = categoryId
+      }
+    }
   },
 
   async loadCategories() {
@@ -41,11 +54,30 @@ Page({
       
       // 默认选中第一个分类并加载商品
       if (categories.length > 0) {
-        const firstCategory = categories[0]
-        this.setData({
-          selectedCategoryId: firstCategory.id
-        })
-        await this.loadSubCategoriesAndProducts(firstCategory.id)
+        // 检查是否有从首页传递过来的分类ID
+        if (this.pendingCategoryId) {
+          const targetCategory = categories.find(c => c.id === this.pendingCategoryId)
+          if (targetCategory) {
+            this.setData({
+              selectedCategoryId: targetCategory.id
+            })
+            this.pendingCategoryId = null
+            await this.loadSubCategoriesAndProducts(targetCategory.id)
+          } else {
+            // 如果找不到指定分类，默认选中第一个
+            const firstCategory = categories[0]
+            this.setData({
+              selectedCategoryId: firstCategory.id
+            })
+            await this.loadSubCategoriesAndProducts(firstCategory.id)
+          }
+        } else {
+          const firstCategory = categories[0]
+          this.setData({
+            selectedCategoryId: firstCategory.id
+          })
+          await this.loadSubCategoriesAndProducts(firstCategory.id)
+        }
       }
     } catch (err) {
       console.error(err)
@@ -79,6 +111,23 @@ Page({
       console.error(err)
       // 如果获取子分类失败，直接查询商品
       this.loadProducts()
+    }
+  },
+
+  // 从首页跳转选中分类
+  async selectCategoryFromHome(categoryId) {
+    const targetCategory = this.data.categories.find(c => c.id === categoryId)
+    if (targetCategory) {
+      this.setData({
+        selectedCategoryId: categoryId,
+        selectedSubCategoryId: null,
+        subCategories: [],
+        hasSubCategories: false,
+        products: [],
+        page: 1,
+        hasMore: true
+      })
+      await this.loadSubCategoriesAndProducts(categoryId)
     }
   },
 
