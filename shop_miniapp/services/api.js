@@ -49,6 +49,14 @@ module.exports = {
   queryPayStatus: (id) => request({ url: `/user/pay/status/${id}`, method: 'GET' }),
   applyRefund: (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' }),
 
+  // 退款管理
+  applyRefundNew: (data) => request({ url: '/user/refunds/apply', method: 'POST', data }),
+  getMyRefunds: (params) => request({ url: '/user/refunds', method: 'GET', data: params }),
+  getRefundDetail: (id) => request({ url: `/user/refunds/${id}`, method: 'GET' }),
+
+  // 订单物流
+  getOrderLogistics: (id) => request({ url: `/user/orders/${id}/logistics`, method: 'GET' }),
+
   // 系统配置相关
   getConfig: (name) => request({ url: `/miniapp/config/${name}`, method: 'GET' }),
   getConfigsByNames: (names) => request({ url: '/miniapp/configs/batch', method: 'POST', data: { names } }),

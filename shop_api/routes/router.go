@@ -87,6 +87,13 @@ func SetupRouter() *gin.Engine {
 			user.POST("/pay/mock_success/:id", handlers.MockPaySuccess)
 			user.POST("/pay/refund/:id", handlers.ApplyRefund)
 
+			// 退款管理（用户端）
+			user.GET("/refunds", handlers.GetMyRefunds)
+			user.GET("/refunds/:id", handlers.GetRefundDetail)
+
+			// 订单物流查询
+			user.GET("/orders/:id/logistics", handlers.GetOrderLogistics)
+
 			// 优惠券（用户端）
 			user.GET("/coupons/available", handlers.GetAvailableCoupons)
 			user.POST("/coupons/receive/:id", handlers.ReceiveCoupon)
@@ -175,6 +182,17 @@ func SetupRouter() *gin.Engine {
 			adminAuth.PUT("/shipping/templates/:id", handlers.UpdateShippingTemplate)
 			adminAuth.DELETE("/shipping/templates/:id", handlers.DeleteShippingTemplate)
 			adminAuth.POST("/shipping/templates/:id/default", handlers.SetDefaultTemplate)
+
+			// 退款管理（后台）
+			adminAuth.GET("/refunds", handlers.AdminGetRefunds)
+			adminAuth.GET("/refunds/:id", handlers.AdminGetRefundDetail)
+			adminAuth.POST("/refunds/:id/approve", handlers.AdminApproveRefund)
+			adminAuth.POST("/refunds/:id/reject", handlers.AdminRejectRefund)
+
+			// 数据统计（后台）
+			adminAuth.GET("/statistics/dashboard", handlers.GetDashboardStats)
+			adminAuth.GET("/statistics/sales-trend", handlers.GetSalesTrend)
+			adminAuth.GET("/statistics/users-trend", handlers.GetUsersTrend)
 		}
 	}
 

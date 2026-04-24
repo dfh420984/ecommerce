@@ -1,0 +1,97 @@
+<!--pages/refund-list/refund-list.wxml-->
+<view class="container">
+  <!-- 状态筛选 -->
+  <view class="filter-bar">
+    <view 
+      class="filter-item {{!statusFilter ? 'active' : ''}}"
+      data-status=""
+      bindtap="onStatusChange"
+    >
+      全部
+    </view>
+    <view 
+      class="filter-item {{statusFilter === '1' ? 'active' : ''}}"
+      data-status="1"
+      bindtap="onStatusChange"
+    >
+      待审核
+    </view>
+    <view 
+      class="filter-item {{statusFilter === '2' ? 'active' : ''}}"
+      data-status="2"
+      bindtap="onStatusChange"
+    >
+      已通过
+    </view>
+    <view 
+      class="filter-item {{statusFilter === '3' ? 'active' : ''}}"
+      data-status="3"
+      bindtap="onStatusChange"
+    >
+      已拒绝
+    </view>
+    <view 
+      class="filter-item {{statusFilter === '5' ? 'active' : ''}}"
+      data-status="5"
+      bindtap="onStatusChange"
+    >
+      已完成
+    </view>
+  </view>
+
+  <!-- 退款列表 -->
+  <view class="refund-list" wx:if="{{refundList.length > 0}}">
+    <view 
+      class="refund-item" 
+      wx:for="{{refundList}}" 
+      wx:key="id"
+      bindtap="viewDetail"
+      data-id="{{item.id}}"
+    >
+      <!-- 订单信息 -->
+      <view class="order-header">
+        <text class="order-no">订单号：{{item.order && item.order.order_no}}</text>
+        <text class="status {{getStatusClass(item.status)}}">{{getStatusText(item.status)}}</text>
+      </view>
+
+      <!-- 退款信息 -->
+      <view class="refund-info">
+        <view class="info-row">
+          <text class="label">退款类型：</text>
+          <text class="value">{{item.refund_type === 'refund_only' ? '仅退款' : '换货'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">退款金额：</text>
+          <text class="value price">¥{{item.refund_amount}}</text>
+        </view>
+        <view class="info-row">
+          <text class="label">申请时间：</text>
+          <text class="value">{{item.created_at}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.handler_reply}}">
+          <text class="label">处理意见：</text>
+          <text class="value">{{item.handler_reply}}</text>
+        </view>
+      </view>
+
+      <!-- 箭头 -->
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{refundList.length === 0 && !loading}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无退款记录</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-more" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 没有更多 -->
+  <view class="no-more" wx:if="{{!hasMore && refundList.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+</view>

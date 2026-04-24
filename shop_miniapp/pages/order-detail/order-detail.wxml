@@ -54,6 +54,14 @@
       <text class="label">支付时间</text>
       <text class="value">{{order.pay_time}}</text>
     </view>
+    <view class="info-row" wx:if="{{order.express_company}}">
+      <text class="label">物流公司</text>
+      <text class="value" bindtap="onViewLogistics">{{order.express_company}} ›</text>
+    </view>
+    <view class="info-row" wx:if="{{order.express_no}}">
+      <text class="label">快递单号</text>
+      <text class="value" bindtap="onViewLogistics">{{order.express_no}} ›</text>
+    </view>
     <view class="info-row" wx:if="{{order.cancel_time}}">
       <text class="label">取消时间</text>
       <text class="value">{{order.cancel_time}}</text>
@@ -73,5 +81,6 @@
     <view class="action-btn plain-btn" wx:if="{{order.order_status === 3}}" bindtap="onConfirmReceive">确认收货</view>
     <view class="action-btn plain-btn" wx:if="{{order.order_status === 1}}" bindtap="onCancelOrder">取消订单</view>
     <view class="action-btn primary-btn" wx:if="{{order.order_status === 1}}" bindtap="onPay">立即支付</view>
+    <view class="action-btn primary-btn" wx:if="{{order.pay_status === 2 && order.order_status !== 5 && order.order_status !== 6}}" bindtap="onApplyRefund">申请退款</view>
   </view>
 </view>

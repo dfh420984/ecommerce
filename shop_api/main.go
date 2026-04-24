@@ -6,6 +6,7 @@ import (
 	"shop_api/config"
 	"shop_api/database"
 	"shop_api/routes"
+	"shop_api/tasks"
 	"shop_api/utils"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,9 @@ func main() {
 	}
 
 	r := routes.SetupRouter()
+
+	// 启动定时任务
+	tasks.StartCronJobs()
 
 	addr := fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port)
 	log.Printf("Server starting on %s", addr)

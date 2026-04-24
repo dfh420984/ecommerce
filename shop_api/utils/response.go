@@ -45,6 +45,13 @@ func Unauthorized(c *gin.Context) {
 	})
 }
 
+func Forbidden(c *gin.Context, msg string) {
+	c.JSON(http.StatusForbidden, Response{
+		Code: 403,
+		Msg:  msg,
+	})
+}
+
 type PageResult struct {
 	List       interface{} `json:"list"`
 	Total      int64       `json:"total"`

@@ -1,0 +1,82 @@
+<!--pages/refund-detail/refund-detail.wxml-->
+<view class="container" wx:if="{{refund}}">
+  <!-- 状态卡片 -->
+  <view class="status-card">
+    <view class="status-icon">{{refund.status === 5 ? '✅' : refund.status === 3 ? '❌' : '⏳'}}</view>
+    <view class="status-text {{getStatusClass(refund.status)}}">{{getStatusText(refund.status)}}</view>
+    <view class="status-tip" wx:if="{{refund.status === 1}}">商家正在审核您的申请</view>
+    <view class="status-tip" wx:if="{{refund.status === 2}}">退款申请已通过，正在处理中</view>
+    <view class="status-tip" wx:if="{{refund.status === 3}}">退款申请已被拒绝</view>
+    <view class="status-tip" wx:if="{{refund.status === 4}}">退款正在处理中，请耐心等待</view>
+    <view class="status-tip" wx:if="{{refund.status === 5}}">退款已完成，款项已原路返回</view>
+  </view>
+
+  <!-- 退款信息 -->
+  <view class="section">
+    <view class="section-title">退款信息</view>
+    <view class="info-list">
+      <view class="info-item">
+        <text class="label">退款单号</text>
+        <text class="value">{{refund.id}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">订单号</text>
+        <text class="value">{{refund.order && refund.order.order_no}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">退款类型</text>
+        <text class="value">{{refund.refund_type === 'refund_only' ? '仅退款' : '换货'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">退款金额</text>
+        <text class="value price">¥{{refund.refund_amount}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">申请时间</text>
+        <text class="value">{{refund.created_at}}</text>
+      </view>
+      <view class="info-item" wx:if="{{refund.refunded_at}}">
+        <text class="label">退款完成时间</text>
+        <text class="value">{{refund.refunded_at}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款原因 -->
+  <view class="section">
+    <view class="section-title">退款原因</view>
+    <view class="reason-content">{{refund.reason}}</view>
+  </view>
+
+  <!-- 凭证图片 -->
+  <view class="section" wx:if="{{refund.images && refund.images.length > 0}}">
+    <view class="section-title">凭证图片</view>
+    <view class="image-grid">
+      <image 
+        wx:for="{{refund.imageUrls}}" 
+        wx:key="index"
+        src="{{item}}"
+        mode="aspectFill"
+        data-url="{{item}}"
+        bindtap="previewImage"
+      />
+    </view>
+  </view>
+
+  <!-- 处理意见 -->
+  <view class="section" wx:if="{{refund.handler_reply}}">
+    <view class="section-title">处理意见</view>
+    <view class="reply-content">
+      <view class="reply-header">
+        <text class="handler">处理人：{{refund.handler && refund.handler.nickname || '客服'}}</text>
+        <text class="time" wx:if="{{refund.updated_at}}">{{refund.updated_at}}</text>
+      </view>
+      <view class="reply-text">{{refund.handler_reply}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading" wx:if="{{loading}}">
+  <text>加载中...</text>
+</view>

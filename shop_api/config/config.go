@@ -9,12 +9,13 @@ import (
 )
 
 type Config struct {
-	App      AppConfig      `yaml:"app"`
-	Database DatabaseConfig `yaml:"database"`
-	Redis    RedisConfig    `yaml:"redis"`
-	Wechat   WechatConfig   `yaml:"wechat"`
-	Alipay   AlipayConfig   `yaml:"alipay"`
-	Cors     CorsConfig     `yaml:"cors"`
+	App       AppConfig       `yaml:"app"`
+	Database  DatabaseConfig  `yaml:"database"`
+	Redis     RedisConfig     `yaml:"redis"`
+	Wechat    WechatConfig    `yaml:"wechat"`
+	Alipay    AlipayConfig    `yaml:"alipay"`
+	Logistics LogisticsConfig `yaml:"logistics"`
+	Cors      CorsConfig      `yaml:"cors"`
 }
 
 type AppConfig struct {
@@ -67,6 +68,12 @@ type CorsConfig struct {
 	AllowOrigins []string `yaml:"allow_origins"`
 	AllowMethods []string `yaml:"allow_methods"`
 	AllowHeaders []string `yaml:"allow_headers"`
+}
+
+type LogisticsConfig struct {
+	Provider string `yaml:"provider"` // kuaidi100/aliyun
+	APIKey   string `yaml:"api_key"`
+	Customer string `yaml:"customer"`
 }
 
 var (

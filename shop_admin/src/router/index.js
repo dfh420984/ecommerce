@@ -77,6 +77,12 @@ const routes = [
         name: 'ShippingTemplates',
         component: () => import('@/views/ShippingTemplates.vue'),
         meta: { title: '运费模板管理' }
+      },
+      {
+        path: 'refunds',
+        name: 'Refunds',
+        component: () => import('@/views/Refunds.vue'),
+        meta: { title: '退款管理' }
       }
     ]
   }

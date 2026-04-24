@@ -39,6 +39,11 @@ alipay:
   public_key: alipay-public-key
   notify_url: http://your-domain.com/api/notify/alipay
 
+logistics:
+  provider: kuaidi100  # kuaidi100/aliyun
+  api_key: ""  # 快递100 API Key，留空则使用模拟数据
+  customer: ""  # 快递100 Customer ID
+
 cors:
   allow_origins:
     - "http://localhost:8686"

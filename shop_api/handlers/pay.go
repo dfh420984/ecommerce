@@ -299,24 +299,3 @@ func MockPaySuccess(c *gin.Context) {
 		"order_status": order.OrderStatus,
 	})
 }
-
-func ApplyRefund(c *gin.Context) {
-	userID := utils.GetUserID(c)
-	orderID := c.Param("id")
-
-	var order models.Order
-	if err := database.GetDB().Where("id = ? AND user_id = ?", orderID, userID).First(&order).Error; err != nil {
-		utils.Fail(c, "订单不存在")
-		return
-	}
-
-	if order.PayStatus != models.PayStatusPaid {
-		utils.Fail(c, "该订单无法申请退款")
-		return
-	}
-
-	order.OrderStatus = models.OrderStatusRefund
-	database.GetDB().Save(&order)
-
-	utils.Success(c, nil)
-}

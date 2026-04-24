@@ -113,5 +113,21 @@ Page({
   onProductTap(e) {
     const { id } = e.currentTarget.dataset
     wx.navigateTo({ url: `/pages/product/product?id=${id}` })
+  },
+
+  // 查看物流
+  onViewLogistics() {
+    if (!this.data.order || !this.data.order.id) return
+    wx.navigateTo({
+      url: `/pages/logistics/logistics?order_id=${this.data.order.id}`
+    })
+  },
+
+  // 申请退款
+  onApplyRefund() {
+    if (!this.data.order || !this.data.order.id) return
+    wx.navigateTo({
+      url: `/pages/refund-apply/refund-apply?order_id=${this.data.order.id}`
+    })
   }
 })

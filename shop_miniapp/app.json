@@ -18,7 +18,11 @@
     "pages/help/help",
     "pages/coupon/coupon",
     "pages/register/register",
-    "pages/webview/webview"
+    "pages/webview/webview",
+    "pages/refund-apply/refund-apply",
+    "pages/refund-list/refund-list",
+    "pages/refund-detail/refund-detail",
+    "pages/logistics/logistics"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffffff",

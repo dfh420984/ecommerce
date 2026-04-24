@@ -333,6 +333,29 @@ func (s *PayService) Refund(order *models.Order) error {
 	return nil
 }
 
+// WechatRefund 微信退款
+func (s *PayService) WechatRefund(order *models.Order, refundAmount float64) (string, error) {
+	if !s.IsWechatConfigured() {
+		// 未配置，返回模拟交易号
+		return "mock_wechat_refund_" + order.OrderNo, nil
+	}
+
+	// TODO: 实现真实的微信退款逻辑
+	// 这里需要调用微信支付V3 API的退款接口
+	return "", fmt.Errorf("微信退款功能待实现")
+}
+
+// AlipayRefund 支付宝退款
+func (s *PayService) AlipayRefund(order *models.Order, refundAmount float64) (string, error) {
+	if !s.IsAlipayConfigured() {
+		// 未配置，返回模拟交易号
+		return "mock_alipay_refund_" + order.OrderNo, nil
+	}
+
+	// TODO: 实现真实的支付宝退款逻辑
+	return "", fmt.Errorf("支付宝退款功能待实现")
+}
+
 var payService *PayService
 var payOnce sync.Once
 

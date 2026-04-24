@@ -1,0 +1,42 @@
+<!--pages/logistics/logistics.wxml-->
+<view class="container">
+  <!-- 快递信息卡片 -->
+  <view class="express-card" wx:if="{{expressCompany}}">
+    <view class="express-header">
+      <view class="company-info">
+        <text class="company-name">{{expressCompany}}</text>
+        <text class="express-no" bindtap="copyExpressNo">{{expressNo}}</text>
+      </view>
+      <view class="copy-btn" bindtap="copyExpressNo">复制</view>
+    </view>
+  </view>
+
+  <!-- 物流轨迹 -->
+  <view class="tracks-container" wx:if="{{tracks.length > 0}}">
+    <view class="track-item" wx:for="{{tracks}}" wx:key="index">
+      <!-- 时间线 -->
+      <view class="timeline">
+        <view class="dot {{index === 0 ? 'active' : ''}}"></view>
+        <view class="line" wx:if="{{index < tracks.length - 1}}"></view>
+      </view>
+      
+      <!-- 内容 -->
+      <view class="track-content {{index === 0 ? 'latest' : ''}}">
+        <view class="track-time">{{item.time}}</view>
+        <view class="track-status">{{item.status}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{tracks.length === 0 && !loading}}">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">暂无物流信息</text>
+    <text class="empty-tip" wx:if="{{!expressCompany}}">订单尚未发货</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

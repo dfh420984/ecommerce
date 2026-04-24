@@ -25,6 +25,8 @@ type Order struct {
 	Remark         string           `gorm:"size:500;default:''" json:"remark"`
 	ExpressCompany string           `gorm:"size:100;default:''" json:"express_company"` // 快递公司
 	ExpressNo      string           `gorm:"size:100;default:''" json:"express_no"`      // 快递单号
+	ExpireTime     *types.LocalTime `json:"expire_time"`                                // 订单过期时间
+	StockReserved  int              `gorm:"default:0" json:"stock_reserved"`            // 预占库存数量
 	CancelTime     *types.LocalTime `json:"cancel_time"`
 	CompleteTime   *types.LocalTime `json:"complete_time"`
 	CreatedAt      types.LocalTime  `gorm:"autoCreateTime;index" json:"created_at"`

@@ -1,0 +1,142 @@
+/* pages/refund-detail/refund-detail.wxss */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 状态卡片 */
+.status-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60rpx 40rpx;
+  text-align: center;
+  color: #fff;
+}
+
+.status-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+
+.status-text {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.status-tip {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+/* 内容区块 */
+.section {
+  background: #fff;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 16rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+/* 信息列表 */
+.info-list {
+  padding: 10rpx 0;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f8f8f8;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.value {
+  font-size: 28rpx;
+  color: #333;
+  max-width: 60%;
+  text-align: right;
+  word-break: break-all;
+}
+
+.value.price {
+  color: #ff4d4f;
+  font-weight: bold;
+  font-size: 32rpx;
+}
+
+/* 退款原因 */
+.reason-content {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 图片网格 */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.image-grid image {
+  width: 100%;
+  height: 200rpx;
+  border-radius: 8rpx;
+}
+
+/* 处理意见 */
+.reply-content {
+  background: #f8f8f8;
+  padding: 20rpx;
+  border-radius: 8rpx;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.handler {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.reply-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 加载中 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+  font-size: 28rpx;
+  color: #999;
+}

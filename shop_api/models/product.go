@@ -15,7 +15,10 @@ type Product struct {
 	OriginalPrice float64         `gorm:"type:decimal(10,2);default:0" json:"original_price"`
 	Cost          float64         `gorm:"type:decimal(10,2);default:0" json:"cost"`
 	Stock         int             `gorm:"not null;default:0" json:"stock"`
+	StockReserved int             `gorm:"not null;default:0" json:"stock_reserved"` // 预占库存
 	Sales         int             `gorm:"not null;default:0" json:"sales"`
+	AvgRating     float64         `gorm:"type:decimal(3,2);default:0.00" json:"avg_rating"`
+	ReviewCount   int             `gorm:"not null;default:0" json:"review_count"`
 	Images        StringArray     `gorm:"type:text" json:"images"`
 	Description   string          `gorm:"type:text" json:"description"`
 	Content       string          `gorm:"type:text" json:"content"`
