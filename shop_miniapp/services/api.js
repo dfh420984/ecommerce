@@ -51,5 +51,11 @@ module.exports = {
 
   // 系统配置相关
   getConfig: (name) => request({ url: `/miniapp/config/${name}`, method: 'GET' }),
-  getConfigsByNames: (names) => request({ url: '/miniapp/configs/batch', method: 'POST', data: { names } })
+  getConfigsByNames: (names) => request({ url: '/miniapp/configs/batch', method: 'POST', data: { names } }),
+
+  // 优惠券相关
+  getAvailableCoupons: () => request({ url: '/user/coupons/available', method: 'GET' }),
+  receiveCoupon: (id) => request({ url: `/user/coupons/receive/${id}`, method: 'POST' }),
+  getMyCoupons: (status) => request({ url: '/user/coupons/my', method: 'GET', data: status ? { status } : {} }),
+  getUsableCoupons: (amount) => request({ url: '/user/coupons/usable', method: 'GET', data: { amount } })
 }

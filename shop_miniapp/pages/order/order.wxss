@@ -55,6 +55,68 @@
   color: #333;
 }
 
+/* 优惠券区域 */
+.coupon-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.coupon-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.coupon-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.coupon-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.coupon-detail {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.coupon-name {
+  font-size: 26rpx;
+  color: #ff6b6b;
+  margin-right: 10rpx;
+}
+
+.coupon-discount {
+  font-size: 28rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.coupon-tip {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.coupon-actions {
+  display: flex;
+  align-items: center;
+}
+
+.cancel-btn {
+  font-size: 24rpx;
+  color: #999;
+  padding: 8rpx 16rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  margin-left: 10rpx;
+}
+
 .order-section {
   background: #fff;
   padding: 30rpx;
@@ -126,7 +188,22 @@
 
 .total-info {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.amount-row {
+  display: flex;
   align-items: center;
+}
+
+.discount-row {
+  margin-top: 4rpx;
+}
+
+.discount-text {
+  font-size: 22rpx;
+  color: #ff6b6b;
 }
 
 .total-label {

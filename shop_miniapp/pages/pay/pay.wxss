@@ -33,6 +33,16 @@
   color: #999;
 }
 
+/* 优惠券信息 */
+.coupon-info {
+  margin-top: 15rpx;
+}
+
+.coupon-text {
+  font-size: 24rpx;
+  color: #ff6b6b;
+}
+
 /* 已支付标识 */
 .paid-badge {
   margin-top: 20rpx;

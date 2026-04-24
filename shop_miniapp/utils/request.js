@@ -75,6 +75,12 @@ const getPayStatus = (id) => request({ url: `/user/pay/status/${id}` })
 const mockPaySuccess = (id) => request({ url: `/user/pay/mock_success/${id}`, method: 'POST' })
 const applyRefund = (id) => request({ url: `/user/pay/refund/${id}`, method: 'POST' })
 
+// 优惠券相关
+const getAvailableCoupons = () => request({ url: '/user/coupons/available' })
+const receiveCoupon = (id) => request({ url: `/user/coupons/receive/${id}`, method: 'POST' })
+const getMyCoupons = (status) => request({ url: '/user/coupons/my', data: status ? { status } : {} })
+const getUsableCoupons = (amount) => request({ url: '/user/coupons/usable', data: { amount } })
+
 // 通用 GET 和 POST 方法
 const get = (url, params) => request({ url, method: 'GET', data: params })
 const post = (url, data) => request({ url, method: 'POST', data })
@@ -117,5 +123,9 @@ module.exports = {
   getPayURL,
   getPayStatus,
   mockPaySuccess,
-  applyRefund
+  applyRefund,
+  getAvailableCoupons,
+  receiveCoupon,
+  getMyCoupons,
+  getUsableCoupons
 }

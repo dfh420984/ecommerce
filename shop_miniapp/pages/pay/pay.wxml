@@ -5,6 +5,10 @@
       <text class="amount-value">¥{{order.pay_amount}}</text>
     </view>
     <view class="order-no">订单号: {{order.order_no}}</view>
+    <!-- 优惠券信息 -->
+    <view class="coupon-info" wx:if="{{hasCoupon}}">
+      <text class="coupon-text">优惠券优惠: -¥{{couponAmount}}</text>
+    </view>
     <!-- 已支付标识 -->
     <view class="paid-badge" wx:if="{{paid}}">
       <text class="badge-icon">✓</text>

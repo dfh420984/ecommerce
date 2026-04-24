@@ -3,8 +3,10 @@ package handlers
 import (
 	"shop_api/database"
 	"shop_api/models"
+	"shop_api/types"
 	"shop_api/utils"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,6 +61,9 @@ func Register(c *gin.Context) {
 		utils.Fail(c, "注册失败")
 		return
 	}
+
+	// 新用户注册赠送优惠券
+	grantNewUserCoupons(user.ID)
 
 	utils.Success(c, gin.H{
 		"id":       user.ID,
@@ -428,4 +433,63 @@ func DeleteUser(c *gin.Context) {
 	database.GetDB().Delete(&user)
 
 	utils.Success(c, nil)
+}
+
+// grantNewUserCoupons 新用户注册赠送优惠券
+func grantNewUserCoupons(userID uint64) {
+	// 查询所有启用的新人券
+	var coupons []models.Coupon
+	database.GetDB().Where("status = ? AND is_new_user = ?", 1, 1).Find(&coupons)
+
+	if len(coupons) == 0 {
+		return
+	}
+
+	tx := database.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	for _, coupon := range coupons {
+		// 检查用户是否已领取
+		var count int64
+		tx.Model(&models.UserCoupon{}).Where("coupon_id = ? AND user_id = ?", coupon.ID, userID).Count(&count)
+		if count > 0 {
+			continue
+		}
+
+		// 计算过期时间
+		var expireTime time.Time
+		if coupon.ValidType == 1 {
+			if coupon.EndTime != nil {
+				expireTime = time.Time(*coupon.EndTime)
+			} else {
+				continue
+			}
+		} else {
+			expireTime = time.Now().AddDate(0, 0, coupon.ValidDays)
+		}
+
+		// 创建用户优惠券
+		userCoupon := models.UserCoupon{
+			CouponID:   coupon.ID,
+			UserID:     userID,
+			Status:     1,
+			ExpireTime: types.LocalTime(expireTime),
+		}
+
+		if err := tx.Create(&userCoupon).Error; err != nil {
+			continue
+		}
+
+		// 更新优惠券领取数量
+		if coupon.TotalCount > 0 {
+			tx.Model(&models.Coupon{}).Where("id = ?", coupon.ID).
+				UpdateColumn("received_count", database.GetDB().Raw("received_count + 1"))
+		}
+	}
+
+	tx.Commit()
 }

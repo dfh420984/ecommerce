@@ -136,3 +136,58 @@ export function updateOrderStatus(id, data) {
     data
   })
 }
+
+// 优惠券管理
+export function getCoupons(params) {
+  return request({
+    url: '/admin/coupons',
+    method: 'get',
+    params
+  })
+}
+
+export function getCoupon(id) {
+  return request({
+    url: `/admin/coupons/${id}`,
+    method: 'get'
+  })
+}
+
+export function createCoupon(data) {
+  return request({
+    url: '/admin/coupons',
+    method: 'post',
+    data
+  })
+}
+
+export function updateCoupon(id, data) {
+  return request({
+    url: `/admin/coupons/${id}`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteCoupon(id) {
+  return request({
+    url: `/admin/coupons/${id}`,
+    method: 'delete'
+  })
+}
+
+export function updateCouponStatus(id, data) {
+  return request({
+    url: `/admin/coupons/${id}/status`,
+    method: 'post',
+    data
+  })
+}
+
+export function grantCouponToUser(data) {
+  return request({
+    url: '/admin/coupons/grant',
+    method: 'post',
+    data
+  })
+}

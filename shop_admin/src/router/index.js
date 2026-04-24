@@ -65,6 +65,12 @@ const routes = [
         name: 'HelpCenter',
         component: () => import('@/views/HelpCenter.vue'),
         meta: { title: '帮助中心' }
+      },
+      {
+        path: 'coupons',
+        name: 'Coupons',
+        component: () => import('@/views/Coupons.vue'),
+        meta: { title: '优惠券管理' }
       }
     ]
   }

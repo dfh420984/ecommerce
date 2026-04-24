@@ -1,35 +1,79 @@
 <view class="container">
-  <view class="coupon-tabs">
-    <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="onTabChange" data-index="0">未使用</view>
-    <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="onTabChange" data-index="1">已使用</view>
-    <view class="tab-item {{activeTab === 2 ? 'active' : ''}}" bindtap="onTabChange" data-index="2">已过期</view>
+  <!-- 主Tab -->
+  <view class="main-tabs">
+    <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="onTabChange" data-index="0">可领取</view>
+    <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="onTabChange" data-index="1">已领取</view>
   </view>
 
-  <view class="coupon-list" wx:if="{{couponList.length > 0}}">
-    <view class="coupon-item" wx:for="{{couponList}}" wx:key="id">
-      <view class="coupon-left">
-        <view class="amount">
-          <text class="symbol">¥</text>
-          <text class="value">{{item.amount}}</text>
+  <!-- 可领取列表 -->
+  <view wx:if="{{activeTab === 0}}">
+    <view class="coupon-list" wx:if="{{availableCoupons.length > 0}}">
+      <view class="coupon-item available" wx:for="{{availableCoupons}}" wx:key="id">
+        <view class="coupon-left">
+          <view class="amount">
+            <text class="symbol">¥</text>
+            <text class="value">{{item.discount_value}}</text>
+          </view>
+          <view class="condition" wx:if="{{item.min_amount > 0}}">满{{item.min_amount}}可用</view>
+          <view class="condition" wx:else>无门槛</view>
         </view>
-        <view class="condition">满{{item.minAmount}}可用</view>
-      </view>
-      <view class="coupon-divider"></view>
-      <view class="coupon-right">
-        <text class="coupon-name">{{item.name}}</text>
-        <view class="coupon-info">
-          <text class="time">{{item.startTime}} - {{item.endTime}}</text>
-          <view class="status-tag {{item.status}}">{{item.statusText}}</view>
-        </view>
-        <view class="use-btn" wx:if="{{item.status === 'unused'}}" bindtap="onUseCoupon" data-id="{{item.id}}">
-          立即使用
+        <view class="coupon-divider"></view>
+        <view class="coupon-right">
+          <text class="coupon-name">{{item.name}}</text>
+          <view class="coupon-info">
+            <text class="time" wx:if="{{item.valid_type === 1}}">{{formatTime(item.start_time)}} - {{formatTime(item.end_time)}}</text>
+            <text class="time" wx:else>领取后{{item.valid_days}}天有效</text>
+          </view>
+          <view class="stock-info">剩余: {{item.total_count === 0 ? '不限' : (item.total_count - item.received_count)}}</view>
+          <view class="receive-btn" bindtap="onReceiveCoupon" data-id="{{item.id}}">
+            立即领取
+          </view>
         </view>
       </view>
     </view>
+    <view class="empty" wx:else>
+      <text class="empty-text">暂无可领取的优惠券</text>
+    </view>
   </view>
 
-  <view class="empty" wx:else>
-    <image class="empty-icon" src="/static/empty.png" mode="aspectFit" />
-    <text class="empty-text">暂无优惠券</text>
+  <!-- 已领取列表 -->
+  <view wx:if="{{activeTab === 1}}">
+    <!-- 子Tab -->
+    <view class="sub-tabs">
+      <view class="sub-tab-item {{subTab === 0 ? 'active' : ''}}" bindtap="onSubTabChange" data-index="0">未使用</view>
+      <view class="sub-tab-item {{subTab === 1 ? 'active' : ''}}" bindtap="onSubTabChange" data-index="1">已使用</view>
+      <view class="sub-tab-item {{subTab === 2 ? 'active' : ''}}" bindtap="onSubTabChange" data-index="2">已过期</view>
+    </view>
+
+    <view class="coupon-list" wx:if="{{myCoupons.length > 0}}">
+      <view class="coupon-item {{item.status === 1 ? 'unused' : item.status === 2 ? 'used' : 'expired'}}" 
+            wx:for="{{myCoupons}}" 
+            wx:key="id">
+        <view class="coupon-left">
+          <view class="amount">
+            <text class="symbol">¥</text>
+            <text class="value">{{item.coupon.discount_value}}</text>
+          </view>
+          <view class="condition" wx:if="{{item.coupon.min_amount > 0}}">满{{item.coupon.min_amount}}可用</view>
+          <view class="condition" wx:else>无门槛</view>
+        </view>
+        <view class="coupon-divider"></view>
+        <view class="coupon-right">
+          <text class="coupon-name">{{item.coupon.name}}</text>
+          <view class="coupon-info">
+            <text class="time">有效期至: {{item.expireTimeText}}</text>
+            <view class="status-tag">
+              {{item.status === 1 ? '未使用' : item.status === 2 ? '已使用' : '已过期'}}
+            </view>
+          </view>
+          <view class="use-btn" wx:if="{{item.status === 1}}" bindtap="onUseCoupon" data-id="{{item.id}}">
+            立即使用
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:else>
+      <text class="empty-text">暂无优惠券</text>
+    </view>
   </view>
 </view>

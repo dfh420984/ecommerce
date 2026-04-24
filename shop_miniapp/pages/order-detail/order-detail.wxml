@@ -30,6 +30,10 @@
       <text>商品总额</text>
       <text>¥{{order.total_amount}}</text>
     </view>
+    <view class="amount-row" wx:if="{{order.coupon_amount > 0}}">
+      <text>优惠金额</text>
+      <text class="discount-amount">-¥{{order.coupon_amount}}</text>
+    </view>
     <view class="amount-row">
       <text>运费</text>
       <text>¥{{order.freight_amount}}</text>

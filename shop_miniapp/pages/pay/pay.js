@@ -11,7 +11,9 @@ Page({
     ],
     selectedPayType: 1,
     paying: false,
-    paid: false // 是否已支付
+    paid: false, // 是否已支付
+    hasCoupon: false, // 是否使用了优惠券
+    couponAmount: 0 // 优惠金额
   },
 
   onLoad(options) {
@@ -29,11 +31,15 @@ Page({
   async loadOrder() {
     try {
       const res = await api.getOrder(this.data.orderId)
+      const order = res.data
       this.setData({
-        order: res.data,
-        orderNo: res.data.order_no,
+        order: order,
+        orderNo: order.order_no,
         // 如果订单已支付，更新状态
-        paid: res.data.pay_status === 1
+        paid: order.pay_status === 1,
+        // 检查是否使用了优惠券
+        hasCoupon: order.coupon_id && order.coupon_amount > 0,
+        couponAmount: order.coupon_amount || 0
       })
     } catch (err) {
       console.error(err)

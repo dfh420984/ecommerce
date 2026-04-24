@@ -13,6 +13,8 @@ type Order struct {
 	DiscountAmount float64          `gorm:"type:decimal(10,2);not null;default:0" json:"discount_amount"`
 	FreightAmount  float64          `gorm:"type:decimal(10,2);not null;default:0" json:"freight_amount"`
 	PayAmount      float64          `gorm:"type:decimal(10,2);not null" json:"pay_amount"`
+	CouponID       *uint64          `gorm:"default:null" json:"coupon_id"`
+	CouponAmount   float64          `gorm:"type:decimal(10,2);not null;default:0" json:"coupon_amount"`
 	PayTime        *types.LocalTime `json:"pay_time"`
 	Consignee      string           `gorm:"size:50;not null" json:"consignee"`
 	Phone          string           `gorm:"size:20;not null" json:"phone"`

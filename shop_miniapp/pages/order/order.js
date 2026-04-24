@@ -13,7 +13,11 @@ Page({
     productId: null,
     quantity: 1,
     remark: '',
-    totalAmount: '0.00'
+    totalAmount: '0.00',
+    usableCoupons: [], // 可用优惠券列表
+    selectedCoupon: null, // 选中的优惠券
+    couponDiscount: 0, // 优惠金额
+    finalAmount: '0.00' // 最终支付金额
   },
 
   onLoad(options) {
@@ -88,8 +92,12 @@ Page({
 
       this.setData({
         orderItems,
-        totalAmount: totalAmount.toFixed(2)
+        totalAmount: totalAmount.toFixed(2),
+        finalAmount: totalAmount.toFixed(2)
       })
+      
+      // 加载可用优惠券
+      this.loadUsableCoupons(totalAmount)
     } catch (err) {
       console.error(err)
     }
@@ -113,8 +121,12 @@ Page({
           quantity,
           subtotal
         }],
-        totalAmount: subtotal.toFixed(2)
+        totalAmount: subtotal.toFixed(2),
+        finalAmount: subtotal.toFixed(2)
       })
+      
+      // 加载可用优惠券
+      this.loadUsableCoupons(subtotal)
     } catch (err) {
       console.error(err)
     }
@@ -131,6 +143,107 @@ Page({
     } catch (err) {
       console.error(err)
     }
+  },
+
+  // 加载可用优惠券
+  async loadUsableCoupons(amount) {
+    try {
+      const res = await api.getUsableCoupons(amount)
+      const coupons = res.data || []
+      
+      // 格式化优惠券信息
+      const formattedCoupons = coupons.map(coupon => {
+        const c = coupon.coupon
+        let discountText = ''
+        let discountAmount = 0
+        
+        if (c.type === 1) {
+          // 满减券
+          discountAmount = c.discount_value
+          discountText = `减¥${c.discount_value}`
+        } else if (c.type === 2) {
+          // 折扣券
+          const discount = (1 - c.discount_value) * amount
+          discountAmount = c.max_discount > 0 && discount > c.max_discount ? c.max_discount : discount
+          discountText = `${(c.discount_value * 10).toFixed(1)}折`
+        } else if (c.type === 3) {
+          // 无门槛券
+          discountAmount = c.discount_value
+          discountText = `减¥${c.discount_value}`
+        }
+        
+        return {
+          ...coupon,
+          discountText,
+          discountAmount: parseFloat(discountAmount.toFixed(2)),
+          expireTimeText: this.formatExpireTime(coupon.expire_time)
+        }
+      })
+      
+      // 按优惠金额从高到低排序
+      formattedCoupons.sort((a, b) => b.discountAmount - a.discountAmount)
+      
+      // 默认选择优惠额度最高的一张
+      const selectedCoupon = formattedCoupons.length > 0 ? formattedCoupons[0] : null
+      const couponDiscount = selectedCoupon ? selectedCoupon.discountAmount : 0
+      const finalAmount = Math.max(0, amount - couponDiscount)
+      
+      this.setData({
+        usableCoupons: formattedCoupons,
+        selectedCoupon,
+        couponDiscount: couponDiscount.toFixed(2),
+        finalAmount: finalAmount.toFixed(2)
+      })
+    } catch (err) {
+      console.error('加载优惠券失败:', err)
+    }
+  },
+  
+  // 格式化过期时间
+  formatExpireTime(expireTime) {
+    if (!expireTime) return ''
+    const date = new Date(expireTime)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  },
+  
+  // 显示优惠券选择弹窗
+  onShowCouponSelector() {
+    if (this.data.usableCoupons.length === 0) {
+      wx.showToast({ title: '暂无可用优惠券', icon: 'none' })
+      return
+    }
+    
+    const items = this.data.usableCoupons.map(c => {
+      return `${c.coupon.name} - ${c.discountText}${c.coupon.min_amount > 0 ? `(满${c.coupon.min_amount}可用)` : '(无门槛)'}`
+    })
+    
+    wx.showActionSheet({
+      itemList: items,
+      success: (res) => {
+        const selectedCoupon = this.data.usableCoupons[res.tapIndex]
+        const couponDiscount = selectedCoupon.discountAmount
+        const totalAmount = parseFloat(this.data.totalAmount)
+        const finalAmount = Math.max(0, totalAmount - couponDiscount)
+        
+        this.setData({
+          selectedCoupon,
+          couponDiscount: couponDiscount.toFixed(2),
+          finalAmount: finalAmount.toFixed(2)
+        })
+      }
+    })
+  },
+  
+  // 取消选择优惠券
+  onCancelCoupon() {
+    this.setData({
+      selectedCoupon: null,
+      couponDiscount: 0,
+      finalAmount: this.data.totalAmount
+    })
   },
 
   onAddressTap() {
@@ -150,19 +263,23 @@ Page({
 
     try {
       let res
+      const orderData = {
+        address_id: this.data.selectedAddress.id,
+        remark: this.data.remark
+      }
+      
+      // 添加优惠券ID（如果选择了）
+      if (this.data.selectedCoupon) {
+        orderData.coupon_id = this.data.selectedCoupon.id
+      }
+      
       if (this.data.cart_ids.length > 0) {
-        res = await api.createOrder({
-          address_id: this.data.selectedAddress.id,
-          cart_ids: this.data.cart_ids,
-          remark: this.data.remark
-        })
+        orderData.cart_ids = this.data.cart_ids
+        res = await api.createOrder(orderData)
       } else if (this.data.productId) {
-        res = await api.createOrder({
-          address_id: this.data.selectedAddress.id,
-          product_id: this.data.productId,
-          quantity: this.data.quantity,
-          remark: this.data.remark
-        })
+        orderData.product_id = this.data.productId
+        orderData.quantity = this.data.quantity
+        res = await api.createOrder(orderData)
       } else {
         wx.showToast({ title: '订单商品不能为空', icon: 'none' })
         return

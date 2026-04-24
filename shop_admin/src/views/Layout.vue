@@ -17,17 +17,21 @@
           <el-icon><Goods /></el-icon>
           <span>分类管理</span>
         </el-menu-item>
-        <el-menu-item index="/products">
-          <el-icon><Goods /></el-icon>
-          <span>商品管理</span>
-        </el-menu-item>
         <el-menu-item index="/banners">
           <el-icon><PictureFilled /></el-icon>
           <span>轮播图</span>
         </el-menu-item>
+        <el-menu-item index="/products">
+          <el-icon><Goods /></el-icon>
+          <span>商品管理</span>
+        </el-menu-item>
         <el-menu-item index="/orders">
           <el-icon><List /></el-icon>
           <span>订单管理</span>
+        </el-menu-item>
+        <el-menu-item index="/coupons">
+          <el-icon><Ticket /></el-icon>
+          <span>优惠券管理</span>
         </el-menu-item>
         <el-menu-item index="/users">
           <el-icon><User /></el-icon>
@@ -74,7 +78,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled } from '@element-plus/icons-vue'
+import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled, Ticket } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfo = computed(() => {

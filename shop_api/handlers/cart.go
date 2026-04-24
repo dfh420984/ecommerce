@@ -30,6 +30,9 @@ func GetCart(c *gin.Context) {
 		}
 	}
 
+	// 保留2位小数，避免浮点数精度问题
+	total = float64(int(total*100+0.5)) / 100
+
 	utils.Success(c, gin.H{
 		"list":  carts,
 		"total": total,

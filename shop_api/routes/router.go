@@ -83,6 +83,12 @@ func SetupRouter() *gin.Engine {
 			user.GET("/pay/status/:id", handlers.QueryPayStatus)
 			user.POST("/pay/mock_success/:id", handlers.MockPaySuccess)
 			user.POST("/pay/refund/:id", handlers.ApplyRefund)
+
+			// 优惠券（用户端）
+			user.GET("/coupons/available", handlers.GetAvailableCoupons)
+			user.POST("/coupons/receive/:id", handlers.ReceiveCoupon)
+			user.GET("/coupons/my", handlers.GetMyCoupons)
+			user.GET("/coupons/usable", handlers.GetUsableCoupons)
 		}
 
 		admin := api.Group("/admin")
@@ -149,6 +155,15 @@ func SetupRouter() *gin.Engine {
 			adminAuth.DELETE("/help/questions/:id", handlers.DeleteHelpQuestion)
 			adminAuth.PUT("/help/questions/batch-status", handlers.BatchUpdateQuestionsStatus)
 			adminAuth.GET("/help/statistics", handlers.GetHelpStatistics)
+
+			// 优惠券管理（后台）
+			adminAuth.GET("/coupons", handlers.AdminCouponList)
+			adminAuth.GET("/coupons/:id", handlers.AdminCouponDetail)
+			adminAuth.POST("/coupons", handlers.AdminCreateCoupon)
+			adminAuth.PUT("/coupons/:id", handlers.AdminUpdateCoupon)
+			adminAuth.DELETE("/coupons/:id", handlers.AdminDeleteCoupon)
+			adminAuth.POST("/coupons/:id/status", handlers.AdminUpdateCouponStatus)
+			adminAuth.POST("/coupons/grant", handlers.AdminGrantCouponToUser)
 		}
 	}
 

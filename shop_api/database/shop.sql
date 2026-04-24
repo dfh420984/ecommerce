@@ -127,6 +127,8 @@ CREATE TABLE `orders` (
   `discount_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '优惠金额',
   `freight_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '运费金额',
   `pay_amount` DECIMAL(10,2) NOT NULL COMMENT '实付金额',
+  `coupon_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '使用的优惠券ID',
+  `coupon_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '优惠券优惠金额',
   `pay_time` TIMESTAMP NULL COMMENT '支付时间',
   `consignee` VARCHAR(50) NOT NULL COMMENT '收货人',
   `phone` VARCHAR(20) NOT NULL COMMENT '手机号',
@@ -301,4 +303,58 @@ INSERT INTO `help_questions` (`category_id`, `title`, `answer`, `sort`, `status`
 (3, '商品有质量问题怎么办？', '如果收到商品有质量问题：\n1. 请在签收后24小时内联系客服\n2. 提供商品照片和视频\n3. 客服会为您安排退换货\n4. 来回运费由我们承担\n\n请保留好商品包装和配件。', 4, 1),
 (4, '如何修改密码？', '1. 进入“我的-设置”\n2. 点击“修改密码”\n3. 输入原密码和新密码\n4. 确认修改\n\n如果忘记密码，可以点击“忘记密码”通过手机号重置。', 1, 1),
 (4, '如何绑定手机号？', '1. 进入“我的-设置”\n2. 点击“绑定手机”\n3. 输入手机号和验证码\n4. 完成绑定\n\n一个手机号只能绑定一个账号。', 2, 1),
-(4, '如何注销账号？', '如需注销账号：\n1. 进入“我的-设置”\n2. 点击“注销账号”\n3. 阅读注销须知\n4. 确认注销\n\n注意：注销后数据无法恢复，请谨慎操作。\n注销前请确保：\n• 无进行中的订单\n• 无未处理的售后\n• 账户余额已清零', 3, 1);
+-- 修改订单表，添加优惠券相关字段
+ALTER TABLE `orders` ADD COLUMN `coupon_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '使用的优惠券ID';
+ALTER TABLE `orders` ADD COLUMN `coupon_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '优惠券抵扣金额';
+
+-- 优惠券模板表
+CREATE TABLE `coupons` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '优惠券ID',
+  `name` VARCHAR(100) NOT NULL COMMENT '优惠券名称',
+  `type` TINYINT NOT NULL DEFAULT 1 COMMENT '类型:1-满减券,2-折扣券,3-无门槛券',
+  `discount_value` DECIMAL(10,2) NOT NULL COMMENT '优惠值(满减金额/折扣率)',
+  `min_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '最低消费金额',
+  `max_discount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '最大优惠金额(折扣券用)',
+  `total_count` INT NOT NULL DEFAULT 0 COMMENT '发放总量(0表示不限)',
+  `received_count` INT NOT NULL DEFAULT 0 COMMENT '已领取数量',
+  `used_count` INT NOT NULL DEFAULT 0 COMMENT '已使用数量',
+  `per_user_limit` INT NOT NULL DEFAULT 1 COMMENT '每人限领数量',
+  `valid_type` TINYINT NOT NULL DEFAULT 1 COMMENT '有效期类型:1-固定时间,2-领取后N天',
+  `start_time` TIMESTAMP NULL COMMENT '开始时间',
+  `end_time` TIMESTAMP NULL COMMENT '结束时间',
+  `valid_days` INT NOT NULL DEFAULT 0 COMMENT '有效天数(领取后)',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态:0-禁用,1-启用',
+  `is_new_user` TINYINT NOT NULL DEFAULT 0 COMMENT '是否新人券:0-否,1-是',
+  `description` TEXT COMMENT '使用说明',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_status` (`status`),
+  INDEX `idx_time` (`start_time`, `end_time`),
+  INDEX `idx_is_new_user` (`is_new_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='优惠券模板表';
+
+-- 用户优惠券表
+CREATE TABLE `user_coupons` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '用户优惠券ID',
+  `coupon_id` BIGINT UNSIGNED NOT NULL COMMENT '优惠券模板ID',
+  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态:1-未使用,2-已使用,3-已过期',
+  `receive_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '领取时间',
+  `use_time` TIMESTAMP NULL COMMENT '使用时间',
+  `order_id` BIGINT UNSIGNED DEFAULT NULL COMMENT '使用的订单ID',
+  `expire_time` TIMESTAMP NOT NULL COMMENT '过期时间',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_user_status` (`user_id`, `status`),
+  INDEX `idx_expire` (`expire_time`),
+  INDEX `idx_coupon` (`coupon_id`),
+  FOREIGN KEY (`coupon_id`) REFERENCES `coupons`(`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户优惠券表';
+
+-- 插入默认数据（示例优惠券）
+INSERT INTO `coupons` (`name`, `type`, `discount_value`, `min_amount`, `max_discount`, `total_count`, `per_user_limit`, `valid_type`, `start_time`, `end_time`, `valid_days`, `status`, `is_new_user`, `description`) VALUES
+('新人专享券', 1, 10.00, 50.00, 0, 0, 1, 2, NULL, NULL, 7, 1, 1, '新用户注册即送，满50元减10元'),
+('满减优惠券', 1, 20.00, 100.00, 0, 1000, 2, 1, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 0, 1, 0, '全场通用，满100元减20元'),
+('8折折扣券', 2, 0.80, 50.00, 50.00, 500, 1, 1, NOW(), DATE_ADD(NOW(), INTERVAL 15 DAY), 0, 1, 0, '商品8折优惠，最高优惠50元');
+

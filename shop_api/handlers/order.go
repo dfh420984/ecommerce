@@ -7,6 +7,7 @@ import (
 	"shop_api/types"
 	"shop_api/utils"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,7 @@ type CreateOrderInput struct {
 	CartIDs   []uint64 `json:"cart_ids"`
 	ProductID uint64   `json:"product_id"`
 	Quantity  int      `json:"quantity"`
+	CouponID  *uint64  `json:"coupon_id"` // 用户优惠券ID
 }
 
 func CreateOrder(c *gin.Context) {
@@ -102,6 +104,22 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
+	// 计算优惠券优惠
+	var couponAmount float64
+	var userCouponID *uint64
+	if input.CouponID != nil && *input.CouponID > 0 {
+		// 验证并计算优惠金额
+		calculatedDiscount, err := CalculateCouponDiscount(*input.CouponID, totalAmount)
+		if err != nil {
+			utils.Fail(c, "优惠券无效")
+			return
+		}
+		if calculatedDiscount > 0 {
+			couponAmount = calculatedDiscount
+			userCouponID = input.CouponID
+		}
+	}
+
 	order := models.Order{
 		OrderNo:        utils.GenerateOrderNo(),
 		UserID:         userID,
@@ -110,7 +128,9 @@ func CreateOrder(c *gin.Context) {
 		TotalAmount:    totalAmount,
 		DiscountAmount: 0,
 		FreightAmount:  0,
-		PayAmount:      totalAmount,
+		PayAmount:      totalAmount - couponAmount,
+		CouponID:       userCouponID,
+		CouponAmount:   couponAmount,
 		Consignee:      address.Consignee,
 		Phone:          address.Phone,
 		Province:       address.Province,
@@ -159,6 +179,30 @@ func CreateOrder(c *gin.Context) {
 			utils.Error("删除购物车失败: %v", err)
 			// 删除购物车失败不影响订单创建，只记录日志
 			utils.Info("删除购物车失败，但订单已创建: %v", err)
+		}
+	}
+
+	// 如果使用了优惠券，标记为已使用
+	if userCouponID != nil && *userCouponID > 0 {
+		now := types.LocalTime(time.Now())
+		if err := tx.Model(&models.UserCoupon{}).Where("id = ?", *userCouponID).Updates(map[string]interface{}{
+			"status":   2,
+			"use_time": &now,
+			"order_id": order.ID,
+		}).Error; err != nil {
+			tx.Rollback()
+			utils.Error("更新优惠券状态失败: %v", err)
+			utils.Fail(c, "更新优惠券状态失败")
+			return
+		}
+
+		// 增加优惠券使用次数
+		if err := tx.Model(&models.Coupon{}).Where("id = (SELECT coupon_id FROM user_coupons WHERE id = ?)", *userCouponID).
+			UpdateColumn("used_count", database.GetDB().Raw("used_count + 1")).Error; err != nil {
+			tx.Rollback()
+			utils.Error("更新优惠券使用次数失败: %v", err)
+			utils.Fail(c, "更新优惠券使用次数失败")
+			return
 		}
 	}
 

@@ -67,6 +67,11 @@ func PageSuccess(c *gin.Context, list interface{}, total int64, page, pageSize i
 	})
 }
 
+// SuccessWithPage 分页成功响应（PageSuccess的别名）
+func SuccessWithPage(c *gin.Context, list interface{}, page, pageSize int, total int) {
+	PageSuccess(c, list, int64(total), page, pageSize)
+}
+
 func GetUserID(c *gin.Context) uint64 {
 	v, exists := c.Get("user_id")
 	if !exists {
