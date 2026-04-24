@@ -57,5 +57,8 @@ module.exports = {
   getAvailableCoupons: () => request({ url: '/user/coupons/available', method: 'GET' }),
   receiveCoupon: (id) => request({ url: `/user/coupons/receive/${id}`, method: 'POST' }),
   getMyCoupons: (status) => request({ url: '/user/coupons/my', method: 'GET', data: status ? { status } : {} }),
-  getUsableCoupons: (amount) => request({ url: '/user/coupons/usable', method: 'GET', data: { amount } })
+  getUsableCoupons: (amount) => request({ url: '/user/coupons/usable', method: 'GET', data: { amount } }),
+
+  // 运费计算
+  calculateShippingFee: (data) => request({ url: '/miniapp/shipping/calculate', method: 'POST', data })
 }

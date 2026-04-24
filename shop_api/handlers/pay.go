@@ -27,16 +27,43 @@ func GetPayURL(c *gin.Context) {
 		return
 	}
 
+	// 使用事务和行锁防止并发支付
+	tx := database.GetDB().Begin()
+
 	var order models.Order
-	if err := database.GetDB().Where("id = ? AND user_id = ?", input.OrderID, userID).First(&order).Error; err != nil {
+	if err := tx.Set("gorm:query_option", "FOR UPDATE").Where("id = ? AND user_id = ?", input.OrderID, userID).First(&order).Error; err != nil {
+		tx.Rollback()
 		utils.Fail(c, "订单不存在")
 		return
 	}
 
 	if order.PayStatus != models.PayStatusUnpaid {
-		utils.Fail(c, "订单已支付")
+		tx.Rollback()
+		utils.Fail(c, "订单已支付，请勿重复提交")
 		return
 	}
+
+	// 如果是模拟支付，直接在事务中处理
+	if input.PayType == models.PayTypeWechat || input.PayType == models.PayTypeAlipay {
+		// 检查是否配置了真实支付
+		payService := services.GetPayService()
+		isConfigured := false
+
+		if input.PayType == models.PayTypeWechat {
+			isConfigured = payService.IsWechatConfigured()
+		} else {
+			isConfigured = payService.IsAlipayConfigured()
+		}
+
+		if !isConfigured {
+			// 未配置，使用模拟支付，在事务中处理
+			tx.Rollback() // 释放锁
+			mockPayAndRespond(c, &order, input.PayType)
+			return
+		}
+	}
+
+	tx.Rollback() // 释放锁
 
 	var payURL string
 	var err error
@@ -45,23 +72,9 @@ func GetPayURL(c *gin.Context) {
 
 	switch input.PayType {
 	case models.PayTypeWechat:
-		// 检查微信支付是否配置
-		if !payService.IsWechatConfigured() {
-			// 未配置，使用模拟支付
-			utils.Info("微信支付未配置，使用模拟支付")
-			payURL = "mock"
-		} else {
-			payURL, err = payService.GetWechatPayURL(&order)
-		}
+		payURL, err = payService.GetWechatPayURL(&order)
 	case models.PayTypeAlipay:
-		// 检查支付宝是否配置
-		if !payService.IsAlipayConfigured() {
-			// 未配置，使用模拟支付
-			utils.Info("支付宝未配置，使用模拟支付")
-			payURL = "mock"
-		} else {
-			payURL, err = payService.GetAlipayURL(&order)
-		}
+		payURL, err = payService.GetAlipayURL(&order)
 	default:
 		utils.Fail(c, "不支持的支付方式")
 		return
@@ -70,13 +83,6 @@ func GetPayURL(c *gin.Context) {
 	if err != nil {
 		utils.Error("获取支付链接失败: %v", err)
 		utils.Fail(c, "获取支付链接失败: "+err.Error())
-		return
-	}
-
-	// 如果是模拟支付，直接调用模拟支付成功
-	if payURL == "mock" {
-		// 直接执行模拟支付逻辑
-		mockPayAndRespond(c, &order, input.PayType)
 		return
 	}
 

@@ -120,6 +120,9 @@ func CreateOrder(c *gin.Context) {
 		}
 	}
 
+	// 计算运费
+	freightAmount, _, _ := calculateFreight(address.Province, address.City, address.District, totalAmount, getTotalQuantity(items))
+
 	order := models.Order{
 		OrderNo:        utils.GenerateOrderNo(),
 		UserID:         userID,
@@ -127,8 +130,8 @@ func CreateOrder(c *gin.Context) {
 		PayStatus:      models.PayStatusUnpaid,
 		TotalAmount:    totalAmount,
 		DiscountAmount: 0,
-		FreightAmount:  0,
-		PayAmount:      totalAmount - couponAmount,
+		FreightAmount:  freightAmount,
+		PayAmount:      totalAmount - couponAmount + freightAmount,
 		CouponID:       userCouponID,
 		CouponAmount:   couponAmount,
 		Consignee:      address.Consignee,
@@ -481,4 +484,13 @@ func UpdateOrderStatus(c *gin.Context) {
 	database.GetDB().Save(&order)
 
 	utils.Success(c, order)
+}
+
+// getTotalQuantity 获取订单商品总数量
+func getTotalQuantity(items []models.OrderItem) int {
+	total := 0
+	for _, item := range items {
+		total += item.Quantity
+	}
+	return total
 }

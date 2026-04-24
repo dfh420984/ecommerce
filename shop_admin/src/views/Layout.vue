@@ -33,6 +33,10 @@
           <el-icon><Ticket /></el-icon>
           <span>优惠券管理</span>
         </el-menu-item>
+        <el-menu-item index="/shipping-templates">
+          <el-icon><Van /></el-icon>
+          <span>运费模板</span>
+        </el-menu-item>
         <el-menu-item index="/users">
           <el-icon><User /></el-icon>
           <span>用户管理</span>
@@ -78,7 +82,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled, Ticket } from '@element-plus/icons-vue'
+import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled, Ticket, Van } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfo = computed(() => {

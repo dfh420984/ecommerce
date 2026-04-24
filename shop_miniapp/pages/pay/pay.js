@@ -1,4 +1,4 @@
-const api = require('../../utils/request.js')
+const api = require('../../services/api.js')
 
 Page({
   data: {
@@ -13,7 +13,8 @@ Page({
     paying: false,
     paid: false, // 是否已支付
     hasCoupon: false, // 是否使用了优惠券
-    couponAmount: 0 // 优惠金额
+    couponAmount: 0, // 优惠金额
+    payDisabled: false // 支付按钮是否禁用
   },
 
   onLoad(options) {
@@ -57,9 +58,20 @@ Page({
   },
 
   async onPay() {
-    if (this.data.paying || this.data.paid || !this.data.order) return
+    // 防止重复提交
+    if (this.data.paying || this.data.paid || this.data.payDisabled || !this.data.order) {
+      if (this.data.paid) {
+        wx.showToast({ title: '订单已支付', icon: 'none' })
+      }
+      return
+    }
 
-    this.setData({ paying: true })
+    // 设置支付状态
+    this.setData({ 
+      paying: true,
+      payDisabled: true 
+    })
+
     try {
       const res = await api.getPayURL({
         order_id: this.data.order.id,
@@ -78,15 +90,15 @@ Page({
         // 更新页面状态
         this.setData({ 
           paid: true,
-          paying: false 
+          paying: false
         })
         
-        // 延迟跳转至订单详情页
+        // 立即跳转，防止重复点击
         setTimeout(() => {
           wx.redirectTo({ 
             url: `/pages/order-detail/order-detail?id=${this.data.order.id}` 
           })
-        }, 2000)
+        }, 1500)
       } else if (res.data.pay_url) {
         // 真实支付，显示二维码或跳转
         wx.showModal({
@@ -94,20 +106,52 @@ Page({
           content: '请扫描支付二维码完成支付',
           showCancel: false,
           success: () => {
-            this.setData({ paying: false })
+            this.setData({ 
+              paying: false,
+              payDisabled: false 
+            })
           }
         })
       } else {
         wx.showToast({ title: '支付开发中', icon: 'none' })
-        this.setData({ paying: false })
+        this.setData({ 
+          paying: false,
+          payDisabled: false 
+        })
       }
     } catch (err) {
       console.error('支付失败:', err)
-      wx.showToast({ 
-        title: err.msg || '支付失败', 
-        icon: 'none' 
-      })
-      this.setData({ paying: false })
+      const errorMsg = err.msg || err.message || '支付失败'
+      
+      // 如果是“订单已支付”的错误，标记为已支付
+      if (errorMsg.includes('已支付')) {
+        this.setData({ 
+          paid: true,
+          paying: false,
+          payDisabled: true
+        })
+        wx.showToast({ 
+          title: '订单已支付', 
+          icon: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+          wx.redirectTo({ 
+            url: `/pages/order-detail/order-detail?id=${this.data.order.id}` 
+          })
+        }, 2000)
+      } else {
+        wx.showToast({ 
+          title: errorMsg, 
+          icon: 'none',
+          duration: 2000
+        })
+        // 支付失败，恢复按钮状态
+        this.setData({ 
+          paying: false,
+          payDisabled: false 
+        })
+      }
     }
   },
 
@@ -122,6 +166,21 @@ Page({
   goOrderDetail() {
     wx.redirectTo({ 
       url: `/pages/order-detail/order-detail?id=${this.data.order.id}` 
+    })
+  },
+
+  // 页面显示时检查订单状态
+  onShow() {
+    if (this.data.orderId) {
+      this.loadOrder()
+    }
+  },
+
+  // 页面卸载时重置状态
+  onUnload() {
+    this.setData({ 
+      paying: false,
+      payDisabled: false 
     })
   }
 })

@@ -352,6 +352,50 @@ CREATE TABLE `user_coupons` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户优惠券表';
 
+-- 运费模板表
+CREATE TABLE `shipping_templates` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '模板ID',
+  `name` VARCHAR(100) NOT NULL COMMENT '模板名称',
+  `is_default` TINYINT NOT NULL DEFAULT 0 COMMENT '是否默认模板:0否,1是',
+  `free_shipping_type` TINYINT NOT NULL DEFAULT 1 COMMENT '包邮类型:1满额包邮,2满件包邮,3满额或满件,4不包邮',
+  `free_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '包邮金额阈值',
+  `free_quantity` INT NOT NULL DEFAULT 0 COMMENT '包邮数量阈值',
+  `base_fee` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '基础运费',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态:0禁用,1启用',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_status` (`status`),
+  INDEX `idx_is_default` (`is_default`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运费模板表';
+
+-- 运费模板区域配置表
+CREATE TABLE `shipping_template_regions` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '区域配置ID',
+  `template_id` BIGINT UNSIGNED NOT NULL COMMENT '模板ID',
+  `province` VARCHAR(50) NOT NULL COMMENT '省份',
+  `city` VARCHAR(50) NOT NULL COMMENT '城市',
+  `district` VARCHAR(50) DEFAULT '' COMMENT '区县（可选）',
+  `fee` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '该区域运费',
+  `free_amount` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '该区域包邮金额',
+  `free_quantity` INT NOT NULL DEFAULT 0 COMMENT '该区域包邮数量',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_template_id` (`template_id`),
+  INDEX `idx_province_city` (`province`, `city`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运费模板区域配置表';
+
+-- 插入默认运费模板数据
+INSERT INTO `shipping_templates` (`name`, `is_default`, `free_shipping_type`, `free_amount`, `free_quantity`, `base_fee`, `status`) VALUES
+('全国包邮模板', 1, 1, 99.00, 0, 0.00, 1),
+('标准运费模板', 0, 1, 199.00, 0, 10.00, 1);
+
+-- 为默认模板添加区域配置（示例：偏远地区加收运费）
+INSERT INTO `shipping_template_regions` (`template_id`, `province`, `city`, `district`, `fee`, `free_amount`, `free_quantity`) VALUES
+(2, '新疆', '乌鲁木齐市', '', 15.00, 199.00, 0),
+(2, '新疆', '克拉玛依市', '', 15.00, 199.00, 0),
+(2, '西藏', '拉萨市', '', 20.00, 199.00, 0),
+(2, '内蒙古', '呼和浩特市', '', 12.00, 199.00, 0);
+
 -- 插入默认数据（示例优惠券）
 INSERT INTO `coupons` (`name`, `type`, `discount_value`, `min_amount`, `max_discount`, `total_count`, `per_user_limit`, `valid_type`, `start_time`, `end_time`, `valid_days`, `status`, `is_new_user`, `description`) VALUES
 ('新人专享券', 1, 10.00, 50.00, 0, 0, 1, 2, NULL, NULL, 7, 1, 1, '新用户注册即送，满50元减10元'),

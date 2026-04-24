@@ -71,6 +71,12 @@ const routes = [
         name: 'Coupons',
         component: () => import('@/views/Coupons.vue'),
         meta: { title: '优惠券管理' }
+      },
+      {
+        path: 'shipping-templates',
+        name: 'ShippingTemplates',
+        component: () => import('@/views/ShippingTemplates.vue'),
+        meta: { title: '运费模板管理' }
       }
     ]
   }

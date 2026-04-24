@@ -46,8 +46,8 @@
       <text class="pay-label">实付:</text>
       <text class="pay-amount">¥{{order.pay_amount}}</text>
     </view>
-    <view class="pay-btn {{paying ? 'disabled' : ''}}" bindtap="onPay">
-      {{paying ? '支付中...' : '立即支付'}}
+    <view class="pay-btn {{paying || payDisabled ? 'disabled' : ''}}" bindtap="onPay">
+      {{paying ? '支付中...' : (payDisabled ? '已支付' : '立即支付')}}
     </view>
   </view>
   

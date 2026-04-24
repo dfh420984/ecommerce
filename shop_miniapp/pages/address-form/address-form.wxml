@@ -12,7 +12,8 @@
       <text class="form-label">地区</text>
       <picker mode="region" bindchange="onRegionChange" value="{{[form.province, form.city, form.district]}}">
         <view class="form-picker">
-          <text>{{form.province || '请选择地区'}}</text>
+          <text wx:if="{{form.province}}">{{form.province}} {{form.city}} {{form.district}}</text>
+          <text wx:else>请选择省市区</text>
         </view>
       </picker>
     </view>

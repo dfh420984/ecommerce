@@ -45,12 +45,11 @@ Page({
   },
 
   onRegionChange(e) {
-    const { value } = e.detail
+    const regions = e.detail.value
     this.setData({
-      selectedRegion: value,
-      'form.province': value,
-      'form.city': value,
-      'form.district': value
+      'form.province': regions[0] || '',
+      'form.city': regions[1] || '',
+      'form.district': regions[2] || ''
     })
   },
 

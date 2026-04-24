@@ -177,12 +177,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 100rpx;
+  min-height: 120rpx;
   background: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30rpx;
+  padding: 15rpx 30rpx;
   box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
 }
 
@@ -195,15 +195,35 @@
 .amount-row {
   display: flex;
   align-items: center;
+  margin-bottom: 4rpx;
 }
 
-.discount-row {
-  margin-top: 4rpx;
+.amount-label {
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 10rpx;
 }
 
-.discount-text {
-  font-size: 22rpx;
+.amount-value {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.free-shipping {
+  font-size: 26rpx;
+  color: #52c41a;
+  font-weight: bold;
+}
+
+.discount-amount {
+  font-size: 26rpx;
   color: #ff6b6b;
+}
+
+.total-row {
+  margin-top: 8rpx;
+  padding-top: 8rpx;
+  border-top: 1rpx solid #f0f0f0;
 }
 
 .total-label {
@@ -219,11 +239,18 @@
 
 .submit-btn {
   width: 200rpx;
-  height: 70rpx;
+  min-height: 70rpx;
   line-height: 70rpx;
   background: #ff6b6b;
   color: #fff;
   font-size: 30rpx;
   text-align: center;
   border-radius: 35rpx;
+  flex-shrink: 0;
+  margin-left: 20rpx;
+}
+
+.submit-btn.submitting {
+  background: #ccc;
+  opacity: 0.6;
 }

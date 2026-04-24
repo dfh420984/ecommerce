@@ -1,4 +1,4 @@
-const api = require('../../utils/request.js')
+const api = require('../../services/api.js')
 const image = require('../../utils/image')
 const app = getApp()
 
@@ -14,10 +14,13 @@ Page({
     quantity: 1,
     remark: '',
     totalAmount: '0.00',
+    freightAmount: '0.00', // 运费
+    isFreeShipping: false, // 是否包邮
     usableCoupons: [], // 可用优惠券列表
     selectedCoupon: null, // 选中的优惠券
     couponDiscount: 0, // 优惠金额
-    finalAmount: '0.00' // 最终支付金额
+    finalAmount: '0.00', // 最终支付金额
+    submitting: false // 是否正在提交订单
   },
 
   onLoad(options) {
@@ -46,8 +49,22 @@ Page({
 
   onShow() {
     if (app.globalData.token) {
-      this.loadAddresses()
+      // 保存之前的地址ID
+      const oldAddressId = this.data.selectedAddress ? this.data.selectedAddress.id : null
+      
+      this.loadAddresses().then(() => {
+        // 如果地址发生变化，重新计算运费
+        const newAddressId = this.data.selectedAddress ? this.data.selectedAddress.id : null
+        if (oldAddressId !== newAddressId && this.data.totalAmount > 0) {
+          this.calculateFreight()
+        }
+      })
     }
+  },
+
+  // 页面隐藏时保存当前状态
+  onHide() {
+    // 可以在这里保存一些临时状态
   },
 
   async loadOrder() {
@@ -96,6 +113,9 @@ Page({
         finalAmount: totalAmount.toFixed(2)
       })
       
+      // 计算运费
+      this.calculateFreight()
+      
       // 加载可用优惠券
       this.loadUsableCoupons(totalAmount)
     } catch (err) {
@@ -125,6 +145,9 @@ Page({
         finalAmount: subtotal.toFixed(2)
       })
       
+      // 计算运费
+      this.calculateFreight()
+      
       // 加载可用优惠券
       this.loadUsableCoupons(subtotal)
     } catch (err) {
@@ -140,8 +163,16 @@ Page({
       this.setData({
         selectedAddress: defaultAddr || addresses[0]
       })
+      
+      // 加载地址后重新计算运费
+      if (this.data.totalAmount > 0) {
+        this.calculateFreight()
+      }
+      
+      return Promise.resolve()
     } catch (err) {
       console.error(err)
+      return Promise.reject(err)
     }
   },
 
@@ -186,7 +217,8 @@ Page({
       // 默认选择优惠额度最高的一张
       const selectedCoupon = formattedCoupons.length > 0 ? formattedCoupons[0] : null
       const couponDiscount = selectedCoupon ? selectedCoupon.discountAmount : 0
-      const finalAmount = Math.max(0, amount - couponDiscount)
+      const freightAmount = parseFloat(this.data.freightAmount)
+      const finalAmount = Math.max(0, amount + freightAmount - couponDiscount)
       
       this.setData({
         usableCoupons: formattedCoupons,
@@ -226,7 +258,8 @@ Page({
         const selectedCoupon = this.data.usableCoupons[res.tapIndex]
         const couponDiscount = selectedCoupon.discountAmount
         const totalAmount = parseFloat(this.data.totalAmount)
-        const finalAmount = Math.max(0, totalAmount - couponDiscount)
+        const freightAmount = parseFloat(this.data.freightAmount)
+        const finalAmount = Math.max(0, totalAmount + freightAmount - couponDiscount)
         
         this.setData({
           selectedCoupon,
@@ -239,16 +272,71 @@ Page({
   
   // 取消选择优惠券
   onCancelCoupon() {
+    const totalAmount = parseFloat(this.data.totalAmount)
+    const freightAmount = parseFloat(this.data.freightAmount)
+    const finalAmount = totalAmount + freightAmount
     this.setData({
       selectedCoupon: null,
       couponDiscount: 0,
-      finalAmount: this.data.totalAmount
+      finalAmount: finalAmount.toFixed(2)
     })
+  },
+
+  // 计算运费
+  async calculateFreight() {
+    if (!this.data.selectedAddress) {
+      return
+    }
+    
+    try {
+      const totalAmount = parseFloat(this.data.totalAmount)
+      const quantity = this.getOrderQuantity()
+      
+      const res = await api.calculateShippingFee({
+        province: this.data.selectedAddress.province,
+        city: this.data.selectedAddress.city,
+        district: this.data.selectedAddress.district || '',
+        amount: totalAmount,
+        quantity: quantity
+      })
+      
+      const freightData = res.data
+      const freightAmount = freightData.freight_amount || 0
+      const isFreeShipping = freightData.is_free || false
+      
+      // 更新最终金额
+      const couponDiscount = parseFloat(this.data.couponDiscount)
+      const finalAmount = Math.max(0, totalAmount + freightAmount - couponDiscount)
+      
+      this.setData({
+        freightAmount: freightAmount.toFixed(2),
+        isFreeShipping,
+        finalAmount: finalAmount.toFixed(2)
+      })
+    } catch (err) {
+      console.error('计算运费失败:', err)
+    }
+  },
+  
+  // 获取订单商品总数量
+  getOrderQuantity() {
+    return this.data.orderItems.reduce((sum, item) => sum + item.quantity, 0)
   },
 
   onAddressTap() {
     const currentId = this.data.selectedAddress ? this.data.selectedAddress.id : ''
     wx.navigateTo({ url: `/pages/address/address?mode=select&id=${currentId}` })
+  },
+
+  // 从地址选择页面返回时的回调
+  onShowAddressSelect(address) {
+    if (address) {
+      this.setData({
+        selectedAddress: address
+      })
+      // 重新计算运费
+      this.calculateFreight()
+    }
   },
 
   onRemarkInput(e) {
@@ -261,7 +349,16 @@ Page({
       return
     }
 
+    // 防止重复提交
+    if (this.data.submitting) {
+      wx.showToast({ title: '正在提交订单...', icon: 'none' })
+      return
+    }
+
     try {
+      // 设置提交状态
+      this.setData({ submitting: true })
+
       let res
       const orderData = {
         address_id: this.data.selectedAddress.id,
@@ -282,11 +379,23 @@ Page({
         res = await api.createOrder(orderData)
       } else {
         wx.showToast({ title: '订单商品不能为空', icon: 'none' })
+        this.setData({ submitting: false })
         return
       }
-      wx.navigateTo({ url: `/pages/pay/pay?order_id=${res.data.order_id}&order_no=${res.data.order_no}` })
+
+      // 提交成功后跳转到支付页面
+      wx.redirectTo({ 
+        url: `/pages/pay/pay?order_id=${res.data.order_id}&order_no=${res.data.order_no}` 
+      })
     } catch (err) {
       console.error(err)
+      // 提交失败，重置状态
+      this.setData({ submitting: false })
     }
+  },
+
+  // 页面卸载时重置提交状态
+  onUnload() {
+    this.setData({ submitting: false })
   }
 })

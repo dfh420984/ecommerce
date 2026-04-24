@@ -46,6 +46,9 @@ func SetupRouter() *gin.Engine {
 			miniapp.GET("/help/question/:id", handlers.GetHelpQuestionDetail)
 			miniapp.GET("/help/search", handlers.SearchHelpQuestions)
 			miniapp.GET("/help/config", handlers.GetHelpConfig)
+
+			// 运费计算（小程序端）
+			miniapp.POST("/shipping/calculate", handlers.CalculateShippingFee)
 		}
 
 		user := api.Group("/user")
@@ -164,6 +167,14 @@ func SetupRouter() *gin.Engine {
 			adminAuth.DELETE("/coupons/:id", handlers.AdminDeleteCoupon)
 			adminAuth.POST("/coupons/:id/status", handlers.AdminUpdateCouponStatus)
 			adminAuth.POST("/coupons/grant", handlers.AdminGrantCouponToUser)
+
+			// 运费模板管理（后台）
+			adminAuth.GET("/shipping/templates", handlers.GetShippingTemplates)
+			adminAuth.GET("/shipping/templates/:id", handlers.GetShippingTemplate)
+			adminAuth.POST("/shipping/templates", handlers.CreateShippingTemplate)
+			adminAuth.PUT("/shipping/templates/:id", handlers.UpdateShippingTemplate)
+			adminAuth.DELETE("/shipping/templates/:id", handlers.DeleteShippingTemplate)
+			adminAuth.POST("/shipping/templates/:id/default", handlers.SetDefaultTemplate)
 		}
 	}
 
