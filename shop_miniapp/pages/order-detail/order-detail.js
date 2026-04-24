@@ -129,5 +129,21 @@ Page({
     wx.navigateTo({
       url: `/pages/refund-apply/refund-apply?order_id=${this.data.order.id}`
     })
+  },
+
+  // 查看退款详情
+  onViewRefundDetail() {
+    if (!this.data.order || !this.data.order.id) return
+    wx.navigateTo({
+      url: '/pages/refund-list/refund-list'
+    })
+  },
+
+  // 查看退款详情
+  onViewRefundDetail() {
+    if (!this.data.order || !this.data.order.id) return
+    wx.navigateTo({
+      url: '/pages/refund-list/refund-list'
+    })
   }
 })

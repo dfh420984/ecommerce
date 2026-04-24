@@ -34,6 +34,11 @@
         <image class="status-icon" src="/static/user/order-received.png" mode="aspectFit" />
         <text class="status-text">已收货</text>
       </view>
+      <view class="status-item" bindtap="onRefundTap">
+        <image class="status-icon" src="/static/user/order.png" mode="aspectFit" />
+        <text class="status-text">退款/售后</text>
+        <view class="badge" wx:if="{{orderCounts.refund > 0}}">{{orderCounts.refund}}</view>
+      </view>
     </view>
   </view>
 

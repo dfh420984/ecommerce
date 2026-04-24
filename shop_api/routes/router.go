@@ -90,6 +90,7 @@ func SetupRouter() *gin.Engine {
 			// 退款管理（用户端）
 			user.GET("/refunds", handlers.GetMyRefunds)
 			user.GET("/refunds/:id", handlers.GetRefundDetail)
+			user.POST("/refunds/apply", handlers.ApplyRefund)
 
 			// 订单物流查询
 			user.GET("/orders/:id/logistics", handlers.GetOrderLogistics)

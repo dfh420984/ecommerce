@@ -1,6 +1,6 @@
 // pages/refund-detail/refund-detail.js
 const api = require('../../services/api')
-const { getImageUrl } = require('../../utils/image')
+const image = require('../../utils/image')
 
 Page({
   data: {
@@ -25,7 +25,7 @@ Page({
       
       // 处理图片URL
       if (refund.images && refund.images.length > 0) {
-        refund.imageUrls = refund.images.map(img => getImageUrl(img))
+        refund.imageUrls = refund.images.map(img => image.formatImageUrl(img))
       }
       
       this.setData({

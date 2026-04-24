@@ -1,7 +1,12 @@
 <view class="container" wx:if="{{order}}">
-  <view class="status-card">
-    <text class="status-text">{{getStatusText(order.order_status)}}</text>
+  <view class="status-card" wx:if="{{order}}">
+    <text class="status-text {{order.order_status === 7 ? 'status-refunding' : ''}} {{order.order_status === 8 ? 'status-refunded' : ''}}">{{getStatusText(order.order_status)}}</text>
     <text class="status-desc">订单号：{{order.order_no}}</text>
+    <view class="refund-tip" wx:if="{{order.order_status === 7 || order.order_status === 8}}">
+      <text class="refund-icon">💰</text>
+      <text class="refund-text">{{order.order_status === 7 ? '退款申请审核中，请耐心等待' : '退款已完成，款项已原路返回'}}</text>
+      <view class="refund-detail-btn" bindtap="onViewRefundDetail">查看退款详情 ›</view>
+    </view>
   </view>
 
   <view class="address-card">
@@ -76,11 +81,19 @@
     </view>
   </view>
 
+  <!-- 底部操作按钮 -->
   <view class="bottom-bar">
+    <!-- 删除订单：已取消或已完成 -->
     <view class="action-btn plain-btn" wx:if="{{order.order_status === 6 || order.order_status === 5}}" bindtap="onDeleteOrder">删除订单</view>
+    <!-- 确认收货：配送中 -->
     <view class="action-btn plain-btn" wx:if="{{order.order_status === 3}}" bindtap="onConfirmReceive">确认收货</view>
+    <!-- 取消订单：待付款 -->
     <view class="action-btn plain-btn" wx:if="{{order.order_status === 1}}" bindtap="onCancelOrder">取消订单</view>
+    <!-- 立即支付：待付款 -->
     <view class="action-btn primary-btn" wx:if="{{order.order_status === 1}}" bindtap="onPay">立即支付</view>
-    <view class="action-btn primary-btn" wx:if="{{order.pay_status === 2 && order.order_status !== 5 && order.order_status !== 6}}" bindtap="onApplyRefund">申请退款</view>
+    <!-- 申请退款：已支付且未完成/未取消/未退款 -->
+    <view class="action-btn primary-btn" wx:if="{{order.pay_status === 1 && order.order_status !== 5 && order.order_status !== 6 && order.order_status !== 7 && order.order_status !== 8}}" bindtap="onApplyRefund">申请退款</view>
+    <!-- 查看退款：退款中或已退款 -->
+    <view class="action-btn primary-btn" wx:if="{{order.order_status === 7 || order.order_status === 8}}" bindtap="onViewRefundDetail">查看退款</view>
   </view>
 </view>

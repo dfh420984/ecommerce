@@ -1,5 +1,7 @@
 // pages/refund-apply/refund-apply.js
 const api = require('../../services/api')
+const app = getApp()
+const image = require('../../utils/image')
 
 Page({
   data: {
@@ -15,7 +17,8 @@ Page({
 
   onLoad(options) {
     if (options.order_id) {
-      this.setData({ orderId: options.order_id })
+      // 将字符串转换为数字
+      this.setData({ orderId: parseInt(options.order_id, 10) })
       this.loadOrderDetail(options.order_id)
     }
   },
@@ -63,11 +66,61 @@ Page({
       sourceType: ['album', 'camera'],
       success(res) {
         const tempFiles = res.tempFiles.map(file => file.tempFilePath)
-        that.setData({
-          images: [...that.data.images, ...tempFiles]
-        })
+        // 立即上传图片
+        that.uploadImages(tempFiles)
       }
     })
+  },
+
+  // 上传图片到服务器
+  async uploadImages(tempFilePaths) {
+    wx.showLoading({ title: '上传中...' })
+    
+    try {
+      const token = app.globalData.token
+      const apiBase = app.globalData.apiBase
+      const uploadedUrls = []
+      
+      // 逐个上传图片
+      for (const filePath of tempFilePaths) {
+        const uploadRes = await new Promise((resolve, reject) => {
+          wx.uploadFile({
+            url: `${apiBase}/upload`,
+            filePath: filePath,
+            name: 'file',
+            header: {
+              'Authorization': `Bearer ${token}`
+            },
+            success: (res) => {
+              const data = JSON.parse(res.data)
+              if (data.code === 0) {
+                resolve(data)
+              } else {
+                reject(new Error(data.msg || '上传失败'))
+              }
+            },
+            fail: (err) => {
+              reject(err)
+            }
+          })
+        })
+        
+        uploadedUrls.push(uploadRes.data.url)
+      }
+      
+      wx.hideLoading()
+      
+      // 将新上传的图片添加到列表
+      this.setData({
+        images: [...this.data.images, ...uploadedUrls]
+      })
+      
+      wx.showToast({ title: '上传成功', icon: 'success' })
+    } catch (err) {
+      wx.hideLoading()
+      console.error('上传图片失败:', err)
+      wx.showToast({ title: '上传失败', icon: 'none' })
+    }
   },
 
   // 删除图片
@@ -101,16 +154,13 @@ Page({
     this.setData({ submitting: true })
     wx.showLoading({ title: '提交中' })
 
-    // TODO: 上传图片到服务器，获取URL
-    // 这里简化处理，直接使用本地路径（实际应该先上传）
-    const imageUrls = images // 实际应该调用上传接口
-
+    // 确保 order_id 是数字类型
     api.applyRefundNew({
-      order_id: orderId,
+      order_id: parseInt(orderId, 10),
       refund_type: refundType,
       reason: reason,
-      refund_amount: refundAmount,
-      images: imageUrls
+      refund_amount: parseFloat(refundAmount),
+      images: images || []
     }).then(() => {
       wx.hideLoading()
       wx.showToast({ title: '申请成功', icon: 'success' })

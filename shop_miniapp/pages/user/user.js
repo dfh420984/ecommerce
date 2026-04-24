@@ -24,7 +24,8 @@ Page({
       pending: 0,
       paid: 0,
       shipped: 0,
-      received: 0
+      received: 0,
+      refund: 0
     }
   },
 
@@ -75,7 +76,8 @@ Page({
         pending: orders.filter(o => o.order_status === 1).length,
         paid: orders.filter(o => o.order_status === 2).length,
         shipped: orders.filter(o => o.order_status === 3).length,
-        received: orders.filter(o => o.order_status === 4).length
+        received: orders.filter(o => o.order_status === 4).length,
+        refund: orders.filter(o => o.order_status === 7 || o.order_status === 8).length
       }
       this.setData({ orderCounts: counts })
     } catch (err) {
@@ -95,6 +97,13 @@ Page({
     if (!app.checkLogin()) return
     const { status } = e.currentTarget.dataset
     wx.navigateTo({ url: `/pages/order-list/order-list?status=${status}` })
+  },
+
+  // 退款/售后点击
+  onRefundTap() {
+    if (!app.checkLogin()) return
+    // 跳转到全部订单页面，传递特殊参数标识退款订单
+    wx.navigateTo({ url: '/pages/order-list/order-list?type=refund' })
   },
 
   // 菜单项点击
@@ -123,7 +132,8 @@ Page({
               pending: 0,
               paid: 0,
               shipped: 0,
-              received: 0
+              received: 0,
+              refund: 0
             }
           })
           wx.showToast({ title: '已退出登录', icon: 'success' })

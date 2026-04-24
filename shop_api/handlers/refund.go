@@ -65,7 +65,31 @@ func ApplyRefund(c *gin.Context) {
 		Status:       models.RefundStatusPending,
 	}
 
-	if err := database.GetDB().Create(&refund).Error; err != nil {
+	tx := database.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Create(&refund).Error; err != nil {
+		tx.Rollback()
+		utils.Fail(c, "申请退款失败")
+		return
+	}
+
+	// 更新订单状态为退款中
+	now := types.Now()
+	if err := tx.Model(&models.Order{}).Where("id = ?", input.OrderID).Updates(map[string]interface{}{
+		"order_status": models.OrderStatusRefund,
+		"updated_at":   now,
+	}).Error; err != nil {
+		tx.Rollback()
+		utils.Fail(c, "更新订单状态失败")
+		return
+	}
+
+	if err := tx.Commit().Error; err != nil {
 		utils.Fail(c, "申请退款失败")
 		return
 	}

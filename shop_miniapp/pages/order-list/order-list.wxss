@@ -81,6 +81,14 @@
   color: #909399;
 }
 
+.order-status.status-refunding {
+  color: #e6a23c;
+}
+
+.order-status.status-refunded {
+  color: #909399;
+}
+
 .order-products {
   margin-bottom: 20rpx;
 }
