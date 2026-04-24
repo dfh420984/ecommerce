@@ -4,6 +4,7 @@
     "pages/category/category",
     "pages/cart/cart",
     "pages/user/user",
+    "pages/profile/profile",
     "pages/product/product",
     "pages/product-list/product-list",
     "pages/order/order",

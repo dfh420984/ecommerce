@@ -8,6 +8,7 @@ Page({
     isLoggedIn: false,
     menuItems: [
       [
+        { icon: '/static/user/profile.png', text: '个人资料', url: '/pages/profile/profile' },
         { icon: '/static/user/order.png', text: '全部订单', url: '/pages/order-list/order-list' }
       ],
       [
