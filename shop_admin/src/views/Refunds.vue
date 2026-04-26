@@ -13,7 +13,7 @@
           <el-input v-model="searchForm.order_no" placeholder="请输入订单号" clearable />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable>
+          <el-select v-model="searchForm.status" placeholder="请选择状态" clearable style="width: 150px">
             <el-option label="待审核" :value="1" />
             <el-option label="已通过" :value="2" />
             <el-option label="已拒绝" :value="3" />
@@ -43,9 +43,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="reason" label="退款原因" min-width="200" show-overflow-tooltip />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="120">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)">
+            <el-tag :type="getStatusType(row.status)" size="small">
               {{ getStatusText(row.status) }}
             </el-tag>
           </template>
@@ -55,7 +55,7 @@
             {{ formatTime(row.created_at) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button size="small" @click="handleView(row)">详情</el-button>
             <el-button 

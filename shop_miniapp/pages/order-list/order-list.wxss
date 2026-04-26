@@ -7,14 +7,17 @@
   display: flex;
   background: #fff;
   padding: 20rpx 0;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .tab-item {
-  flex: 1;
+  flex: 0 0 auto;
+  min-width: 120rpx;
   text-align: center;
   font-size: 28rpx;
   color: #666;
-  padding: 10rpx 0;
+  padding: 10rpx 20rpx;
   position: relative;
 }
 
