@@ -1,0 +1,48 @@
+<view class="container">
+  <view class="review-list">
+    <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+      <view class="review-header" bindtap="onProductTap" data-id="{{item.product_id}}">
+        <image class="product-image" src="{{item.product && item.product.images && item.product.images[0] ? item.product.images[0] : '/static/product.png'}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.product ? item.product.name : ''}}</text>
+          <text class="review-time">{{item.created_at}}</text>
+        </view>
+      </view>
+      
+      <view class="review-content">
+        <view class="review-rating">
+          <text class="stars">{{getStars(item.rating)}}</text>
+        </view>
+        <text class="review-text">{{item.content}}</text>
+        <view class="review-images" wx:if="{{item.images && item.images.length > 0}}">
+          <image 
+            class="review-image" 
+            wx:for="{{item.images}}" 
+            wx:key="index" 
+            wx:for-item="img"
+            src="{{img}}" 
+            mode="aspectFill"
+            bindtap="onPreviewImage"
+            data-images="{{item.images}}"
+            data-current="{{img}}"
+          />
+        </view>
+      </view>
+
+      <view class="review-reply" wx:if="{{item.reply_content}}">
+        <text class="reply-label">商家回复：</text>
+        <text class="reply-content">{{item.reply_content}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-tip" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  <view class="loading-tip" wx:if="{{!hasMore && reviews.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+  <view class="empty-tip" wx:if="{{reviews.length === 0 && !loading}}">
+    <text>暂无评价记录</text>
+  </view>
+</view>

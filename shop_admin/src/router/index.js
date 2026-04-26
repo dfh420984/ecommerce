@@ -83,6 +83,12 @@ const routes = [
         name: 'Refunds',
         component: () => import('@/views/Refunds.vue'),
         meta: { title: '退款管理' }
+      },
+      {
+        path: 'reviews',
+        name: 'Reviews',
+        component: () => import('@/views/Reviews.vue'),
+        meta: { title: '评论管理' }
       }
     ]
   }

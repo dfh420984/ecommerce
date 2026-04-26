@@ -31,8 +31,12 @@
         <view class="badge" wx:if="{{orderCounts.shipped > 0}}">{{orderCounts.shipped}}</view>
       </view>
       <view class="status-item" bindtap="onOrderStatusTap" data-status="4">
-        <image class="status-icon" src="/static/user/order-received.png" mode="aspectFit" />
+        <image class="status-icon" src="/static/user/order-delivery.png" mode="aspectFit" />
         <text class="status-text">已收货</text>
+      </view>
+      <view class="status-item" bindtap="onOrderStatusTap" data-status="5">
+        <image class="status-icon" src="/static/user/order-received.png" mode="aspectFit" />
+        <text class="status-text">已完成</text>
       </view>
       <view class="status-item" bindtap="onRefundTap">
         <image class="status-icon" src="/static/user/order.png" mode="aspectFit" />
@@ -60,6 +64,14 @@
 
   <view class="menu-section">
     <view class="menu-item" wx:for="{{menuItems[2]}}" wx:key="text" bindtap="onMenuTap" data-url="{{item.url}}">
+      <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
+      <text class="menu-text">{{item.text}}</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-item" wx:for="{{menuItems[3]}}" wx:key="text" bindtap="onMenuTap" data-url="{{item.url}}">
       <image class="menu-icon" src="{{item.icon}}" mode="aspectFit" />
       <text class="menu-text">{{item.text}}</text>
       <text class="menu-arrow">></text>

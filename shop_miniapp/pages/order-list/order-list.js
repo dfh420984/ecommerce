@@ -152,5 +152,17 @@ Page({
       8: 'status-refunded'
     }
     return classes[status] || ''
+  },
+
+  // 去评价
+  onGoToReview(e) {
+    const { orderid, items } = e.currentTarget.dataset
+    if (!items || items.length === 0) return
+    
+    // 跳转到第一个未评价的商品的评价页面
+    const firstItem = items[0]
+    wx.navigateTo({
+      url: `/pages/write-review/write-review?order_id=${orderid}&product_id=${firstItem.product_id}&order_item_id=${firstItem.id}&product_name=${encodeURIComponent(firstItem.product_name)}&product_image=${encodeURIComponent(firstItem.product_image || '')}`
+    })
   }
 })

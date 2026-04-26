@@ -53,6 +53,49 @@
   line-height: 1.6;
 }
 
+/* 点赞和收藏交互栏 */
+.interaction-bar {
+  display: flex;
+  align-items: center;
+  margin-top: 30rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.interaction-item {
+  display: flex;
+  align-items: center;
+  margin-right: 40rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 50rpx;
+  background: #f8f8f8;
+  transition: all 0.3s;
+}
+
+.interaction-item:active {
+  transform: scale(0.95);
+}
+
+.interaction-item .icon {
+  font-size: 36rpx;
+  margin-right: 8rpx;
+}
+
+.interaction-item .icon.active {
+  animation: pulse 0.3s ease-in-out;
+}
+
+.interaction-item .count {
+  font-size: 24rpx;
+  color: #666;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
 .address-section {
   background: #fff;
   padding: 30rpx;
@@ -172,6 +215,88 @@
   color: #999;
   text-align: center;
   padding: 40rpx 0;
+}
+
+/* 评论区域 */
+.review-section {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  cursor: pointer;
+}
+
+.review-section:active {
+  background: #f8f8f8;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.title-with-icon .icon {
+  font-size: 32rpx;
+}
+
+.more-link {
+  font-size: 24rpx;
+  color: #ff6b6b;
+}
+
+.review-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rating-info {
+  display: flex;
+  align-items: baseline;
+}
+
+.rating-score {
+  font-size: 48rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.rating-desc {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.rating-stats {
+  display: flex;
+  gap: 20rpx;
+}
+
+.stat-item {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 40rpx 0;
+  color: #999;
+  font-size: 26rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.empty-icon {
+  font-size: 60rpx;
 }
 
 .quantity-section {

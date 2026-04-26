@@ -81,6 +81,15 @@ const receiveCoupon = (id) => request({ url: `/user/coupons/receive/${id}`, meth
 const getMyCoupons = (status) => request({ url: '/user/coupons/my', data: status ? { status } : {} })
 const getUsableCoupons = (amount) => request({ url: '/user/coupons/usable', data: { amount } })
 
+// 商品互动（点赞、收藏）
+const likeProduct = (id) => request({ url: `/user/products/${id}/like`, method: 'POST' })
+const unlikeProduct = (id) => request({ url: `/user/products/${id}/like`, method: 'DELETE' })
+const checkLikeStatus = (id) => request({ url: `/user/products/${id}/like/status` })
+const favoriteProduct = (id) => request({ url: `/user/products/${id}/favorite`, method: 'POST' })
+const unfavoriteProduct = (id) => request({ url: `/user/products/${id}/favorite`, method: 'DELETE' })
+const checkFavoriteStatus = (id) => request({ url: `/user/products/${id}/favorite/status` })
+const getMyFavorites = (params) => request({ url: '/user/favorites', data: params })
+
 // 通用 GET 和 POST 方法
 const get = (url, params) => request({ url, method: 'GET', data: params })
 const post = (url, data) => request({ url, method: 'POST', data })
@@ -127,5 +136,12 @@ module.exports = {
   getAvailableCoupons,
   receiveCoupon,
   getMyCoupons,
-  getUsableCoupons
+  getUsableCoupons,
+  likeProduct,
+  unlikeProduct,
+  checkLikeStatus,
+  favoriteProduct,
+  unfavoriteProduct,
+  checkFavoriteStatus,
+  getMyFavorites
 }

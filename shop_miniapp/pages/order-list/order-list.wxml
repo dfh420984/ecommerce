@@ -4,7 +4,8 @@
     <view class="tab-item {{status === 1 ? 'active' : ''}}" bindtap="onTabChange" data-status="1">待付款</view>
     <view class="tab-item {{status === 2 ? 'active' : ''}}" bindtap="onTabChange" data-status="2">待发货</view>
     <view class="tab-item {{status === 3 ? 'active' : ''}}" bindtap="onTabChange" data-status="3">配送中</view>
-    <view class="tab-item {{status === 4 ? 'active' : ''}}" bindtap="onTabChange" data-status="4">已完成</view>
+    <view class="tab-item {{status === 4 ? 'active' : ''}}" bindtap="onTabChange" data-status="4">已收货</view>
+    <view class="tab-item {{status === 5 ? 'active' : ''}}" bindtap="onTabChange" data-status="5">已完成</view>
     <view class="tab-item {{type === 'refund' ? 'active' : ''}}" bindtap="onTabChange" data-type="refund">退款/售后</view>
   </view>
 
@@ -29,6 +30,13 @@
       <view class="order-footer">
         <text class="order-time">{{item.created_at}}</text>
         <text class="order-total">合计: ¥{{item.pay_amount}}</text>
+      </view>
+      <!-- 去评价按钮：仅已完成订单显示 -->
+      <view class="order-actions" wx:if="{{item.order_status === 5}}">
+        <view class="action-btn review-btn" catchtap="onGoToReview" data-orderid="{{item.id}}" data-items="{{item.items}}">
+          <text class="btn-icon">✍️</text>
+          <text>去评价</text>
+        </view>
       </view>
     </view>
   </view>

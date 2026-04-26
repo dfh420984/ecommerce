@@ -71,6 +71,58 @@ func (s *OrderTimeoutService) CheckAndCancelTimeoutOrders() {
 	log.Printf("成功取消 %d 个超时订单", cancelledCount)
 }
 
+// CheckAndAutoCompleteOrders 检查并自动完成已收货超时的订单
+func (s *OrderTimeoutService) CheckAndAutoCompleteOrders() {
+	log.Println("开始检查自动完成订单...")
+
+	tx := database.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			log.Printf("检查自动完成订单失败: %v", r)
+		}
+	}()
+
+	// 查找已收货超过7天的订单（7天 = 7 * 24 * 60分钟）
+	var orders []models.Order
+	autoCompleteDays := 7 // 自动完成天数，可配置
+	now := time.Now()
+	thresholdTime := now.AddDate(0, 0, -autoCompleteDays)
+
+	err := tx.Where("order_status = ? AND updated_at < ?",
+		models.OrderStatusReceived, thresholdTime).Find(&orders).Error
+
+	if err != nil {
+		tx.Rollback()
+		log.Printf("查询自动完成订单失败: %v", err)
+		return
+	}
+
+	if len(orders) == 0 {
+		tx.Rollback()
+		log.Println("没有需要自动完成的订单")
+		return
+	}
+
+	log.Printf("找到 %d 个需要自动完成的订单，开始处理...", len(orders))
+
+	completedCount := 0
+	for _, order := range orders {
+		if err := s.completeOrder(tx, &order); err != nil {
+			log.Printf("自动完成订单 %d 失败: %v", order.ID, err)
+			continue
+		}
+		completedCount++
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("提交事务失败: %v", err)
+		return
+	}
+
+	log.Printf("成功自动完成 %d 个订单", completedCount)
+}
+
 // cancelOrder 取消单个订单并释放库存
 func (s *OrderTimeoutService) cancelOrder(tx *gorm.DB, order *models.Order) error {
 	// 更新订单状态
@@ -109,6 +161,21 @@ func (s *OrderTimeoutService) cancelOrder(tx *gorm.DB, order *models.Order) erro
 		}
 	}
 
+	return nil
+}
+
+// completeOrder 自动完成单个订单
+func (s *OrderTimeoutService) completeOrder(tx *gorm.DB, order *models.Order) error {
+	// 更新订单状态为已完成
+	now := types.Now()
+	if err := tx.Model(order).Updates(map[string]interface{}{
+		"order_status":  models.OrderStatusCompleted,
+		"complete_time": &now,
+	}).Error; err != nil {
+		return err
+	}
+
+	log.Printf("订单 %d 已自动完成", order.ID)
 	return nil
 }
 

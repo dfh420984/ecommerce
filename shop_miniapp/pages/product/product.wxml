@@ -14,6 +14,17 @@
     <view class="product-desc">
       <text>{{product.description || '暂无描述'}}</text>
     </view>
+    <!-- 点赞和收藏按钮 -->
+    <view class="interaction-bar">
+      <view class="interaction-item" bindtap="onLikeTap">
+        <text class="icon {{isLiked ? 'active' : ''}}">{{isLiked ? '❤️' : '🤍'}}</text>
+        <text class="count">{{product.like_count || 0}}</text>
+      </view>
+      <view class="interaction-item" bindtap="onFavoriteTap">
+        <text class="icon {{isFavorited ? 'active' : ''}}">{{isFavorited ? '⭐' : '☆'}}</text>
+        <text class="count">{{isFavorited ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
   </view>
 
   <view class="product-content">
@@ -41,6 +52,29 @@
       </block>
     </view>
     <view class="no-content" wx:else>暂无详情</view>
+  </view>
+
+  <!-- 评论区域 -->
+  <view class="review-section" bindtap="onViewReviews">
+    <view class="section-header">
+      <view class="title-with-icon">
+        <text class="section-title">商品评价</text>
+      </view>
+      <text class="more-link">查看全部 ›</text>
+    </view>
+    <view class="review-summary" wx:if="{{reviewStats}}">
+      <view class="rating-info">
+        <text class="rating-score">{{reviewStats.average_rating || 0}}</text>
+        <text class="rating-desc">分</text>
+      </view>
+      <view class="rating-stats">
+        <text class="stat-item">共 {{reviewStats.total_count || 0}} 条评价</text>
+      </view>
+    </view>
+    <view class="no-reviews" wx:else>
+      <text class="empty-icon">📝</text>
+      <text>暂无评价，快来抢沙发吧~</text>
+    </view>
   </view>
 
   <view class="address-section" bindtap="onAddressTap">

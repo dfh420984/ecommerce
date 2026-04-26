@@ -279,7 +279,8 @@ INSERT INTO `configs` (`name`, `value`, `description`) VALUES
 ('about_contact', '邮箱：contact@example.com\n电话：400-123-4567\n地址：北京市朝阳区xxx路xxx号', '联系方式'),
 ('app_version', '1.0.0', '应用版本号'),
 ('service_time', '09:00-21:00', '客服服务时间'),
-('customer_service_phone', '400-123-4567', '客服电话');
+('customer_service_phone', '400-123-4567', '客服电话'),
+('auto_complete_days', '7', '订单自动完成天数（用户确认收货后多少天自动完成）');
 
 -- 插入帮助中心默认数据
 INSERT INTO `help_categories` (`name`, `sort`, `status`, `description`) VALUES

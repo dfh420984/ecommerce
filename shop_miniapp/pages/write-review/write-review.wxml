@@ -1,0 +1,53 @@
+<view class="container">
+  <view class="product-info">
+    <image class="product-image" src="{{productImage || '/static/product.png'}}" mode="aspectFill" />
+    <text class="product-name">{{productName}}</text>
+  </view>
+
+  <view class="form-section">
+    <text class="section-title">评分</text>
+    <view class="rating-stars">
+      <text 
+        class="star {{index < rating ? 'active' : ''}}" 
+        wx:for="{{[0,1,2,3,4]}}" 
+        wx:key="index"
+        bindtap="onRatingChange"
+        data-rating="{{index + 1}}"
+      >★</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <text class="section-title">评价内容</text>
+    <textarea 
+      class="content-input" 
+      placeholder="请输入评价内容" 
+      value="{{content}}"
+      bindinput="onContentInput"
+      maxlength="500"
+    />
+    <text class="word-count">{{content.length}}/500</text>
+  </view>
+
+  <view class="form-section">
+    <text class="section-title">上传图片（最多9张）</text>
+    <view class="image-list">
+      <view class="image-item" wx:for="{{images}}" wx:key="index">
+        <image class="image" src="{{item}}" mode="aspectFill" />
+        <view class="delete-btn" bindtap="onDeleteImage" data-index="{{index}}">✕</view>
+      </view>
+      <view class="upload-btn" bindtap="onUploadImage" wx:if="{{images.length < 9}}">
+        <text>+</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <label class="anonymous-switch">
+      <text>匿名评价</text>
+      <switch checked="{{isAnonymous === 1}}" bindchange="onAnonymousChange" />
+    </label>
+  </view>
+
+  <view class="submit-btn" bindtap="onSubmit">提交评价</view>
+</view>

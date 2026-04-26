@@ -145,5 +145,16 @@ Page({
     wx.navigateTo({
       url: '/pages/refund-list/refund-list'
     })
+  },
+
+  // 去评价
+  onGoToReview() {
+    if (!this.data.order || !this.data.order.items || this.data.order.items.length === 0) return
+    
+    // 跳转到第一个商品的评价页面
+    const firstItem = this.data.order.items[0]
+    wx.navigateTo({
+      url: `/pages/write-review/write-review?order_id=${this.data.order.id}&product_id=${firstItem.product_id}&order_item_id=${firstItem.id}&product_name=${encodeURIComponent(firstItem.product_name)}&product_image=${encodeURIComponent(firstItem.product_image || '')}`
+    })
   }
 })

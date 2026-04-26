@@ -19,6 +19,7 @@ type Product struct {
 	Sales         int             `gorm:"not null;default:0" json:"sales"`
 	AvgRating     float64         `gorm:"type:decimal(3,2);default:0.00" json:"avg_rating"`
 	ReviewCount   int             `gorm:"not null;default:0" json:"review_count"`
+	LikeCount     int             `gorm:"not null;default:0" json:"like_count"`
 	Images        StringArray     `gorm:"type:text" json:"images"`
 	Description   string          `gorm:"type:text" json:"description"`
 	Content       string          `gorm:"type:text" json:"content"`

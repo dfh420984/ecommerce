@@ -16,6 +16,12 @@ Page({
         { icon: '/static/user/coupon.png', text: '优惠券', url: '/pages/coupon/coupon' }
       ],
       [
+        // TODO: 需要添加 favorite.png 和 review.png 图标到 /static/user/ 目录
+        // 临时使用其他图标代替
+        { icon: '/static/user/coupon.png', text: '我的收藏', url: '/pages/favorite/favorite' },
+        { icon: '/static/user/help.png', text: '我的评价', url: '/pages/reviews/reviews' }
+      ],
+      [
         { icon: '/static/user/help.png', text: '帮助中心', url: '/pages/help/help' },
         { icon: '/static/user/about.png', text: '关于我们', url: '/pages/about/about' }
       ]

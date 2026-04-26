@@ -41,6 +41,10 @@
           <el-icon><RefreshLeft /></el-icon>
           <span>退款管理</span>
         </el-menu-item>
+        <el-menu-item index="/reviews">
+          <el-icon><ChatDotRound /></el-icon>
+          <span>评论管理</span>
+        </el-menu-item>
         <el-menu-item index="/users">
           <el-icon><User /></el-icon>
           <span>用户管理</span>
@@ -86,7 +90,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled, Ticket, Van, RefreshLeft } from '@element-plus/icons-vue'
+import { HomeFilled, Goods, PictureFilled, List, User, Setting, QuestionFilled, Ticket, Van, RefreshLeft, ChatDotRound } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfo = computed(() => {

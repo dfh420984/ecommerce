@@ -159,6 +159,40 @@
   font-weight: bold;
 }
 
+/* 订单操作按钮 */
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.action-btn {
+  padding: 12rpx 30rpx;
+  border-radius: 50rpx;
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.review-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.review-btn .btn-icon {
+  font-size: 28rpx;
+}
+
+.review-btn:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
 .loading-tip, .empty-tip {
   text-align: center;
   padding: 30rpx;

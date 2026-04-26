@@ -100,6 +100,22 @@ func SetupRouter() *gin.Engine {
 			user.POST("/coupons/receive/:id", handlers.ReceiveCoupon)
 			user.GET("/coupons/my", handlers.GetMyCoupons)
 			user.GET("/coupons/usable", handlers.GetUsableCoupons)
+
+			// 商品互动（点赞、收藏）
+			user.POST("/products/:id/like", handlers.LikeProduct)
+			user.DELETE("/products/:id/like", handlers.UnlikeProduct)
+			user.GET("/products/:id/like/status", handlers.CheckLikeStatus)
+			user.POST("/products/:id/favorite", handlers.FavoriteProduct)
+			user.DELETE("/products/:id/favorite", handlers.UnfavoriteProduct)
+			user.GET("/products/:id/favorite/status", handlers.CheckFavoriteStatus)
+			user.GET("/favorites", handlers.GetMyFavorites)
+
+			// 评价管理（用户端）
+			user.POST("/reviews", handlers.CreateReview)
+			user.GET("/products/:id/reviews", handlers.GetProductReviews)
+			user.GET("/products/:id/reviews/stats", handlers.GetReviewStats)
+			user.GET("/my-reviews", handlers.GetMyReviews)
+			user.GET("/can-review-orders", handlers.GetCanReviewOrders)
 		}
 
 		admin := api.Group("/admin")
@@ -189,6 +205,12 @@ func SetupRouter() *gin.Engine {
 			adminAuth.GET("/refunds/:id", handlers.AdminGetRefundDetail)
 			adminAuth.POST("/refunds/:id/approve", handlers.AdminApproveRefund)
 			adminAuth.POST("/refunds/:id/reject", handlers.AdminRejectRefund)
+
+			// 评论管理（后台）
+			adminAuth.GET("/reviews", handlers.AdminGetReviews)
+			adminAuth.PUT("/reviews/:id/status", handlers.AdminUpdateReviewStatus)
+			adminAuth.POST("/reviews/:id/reply", handlers.AdminReplyReview)
+			adminAuth.DELETE("/reviews/:id", handlers.AdminDeleteReview)
 
 			// 数据统计（后台）
 			adminAuth.GET("/statistics/dashboard", handlers.GetDashboardStats)

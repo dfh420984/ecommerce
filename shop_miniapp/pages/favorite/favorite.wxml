@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="favorite-list">
+    <view class="favorite-item" wx:for="{{favorites}}" wx:key="id" bindtap="onProductTap" data-id="{{item.product_id}}">
+      <image class="product-image" src="{{item.product && item.product.images && item.product.images[0] ? item.product.images[0] : '/static/product.png'}}" mode="aspectFill" />
+      <view class="product-info">
+        <text class="product-name">{{item.product ? item.product.name : ''}}</text>
+        <view class="product-bottom">
+          <text class="product-price">¥{{item.product ? item.product.price : 0}}</text>
+          <view class="action-btns">
+            <text class="remove-btn" catchtap="onRemoveFavorite" data-id="{{item.product_id}}">取消收藏</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-tip" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+  <view class="loading-tip" wx:if="{{!hasMore && favorites.length > 0}}">
+    <text>没有更多了</text>
+  </view>
+  <view class="empty-tip" wx:if="{{favorites.length === 0 && !loading}}">
+    <text>暂无收藏商品</text>
+  </view>
+</view>

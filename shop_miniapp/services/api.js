@@ -68,5 +68,21 @@ module.exports = {
   getUsableCoupons: (amount) => request({ url: '/user/coupons/usable', method: 'GET', data: { amount } }),
 
   // 运费计算
-  calculateShippingFee: (data) => request({ url: '/miniapp/shipping/calculate', method: 'POST', data })
+  calculateShippingFee: (data) => request({ url: '/miniapp/shipping/calculate', method: 'POST', data }),
+
+  // 商品互动（点赞、收藏）
+  likeProduct: (id) => request({ url: `/user/products/${id}/like`, method: 'POST' }),
+  unlikeProduct: (id) => request({ url: `/user/products/${id}/like`, method: 'DELETE' }),
+  checkLikeStatus: (id) => request({ url: `/user/products/${id}/like/status`, method: 'GET' }),
+  favoriteProduct: (id) => request({ url: `/user/products/${id}/favorite`, method: 'POST' }),
+  unfavoriteProduct: (id) => request({ url: `/user/products/${id}/favorite`, method: 'DELETE' }),
+  checkFavoriteStatus: (id) => request({ url: `/user/products/${id}/favorite/status`, method: 'GET' }),
+  getMyFavorites: (params) => request({ url: '/user/favorites', method: 'GET', data: params }),
+
+  // 评价管理
+  createReview: (data) => request({ url: '/user/reviews', method: 'POST', data }),
+  getProductReviews: (id, params) => request({ url: `/user/products/${id}/reviews`, method: 'GET', data: params }),
+  getReviewStats: (id) => request({ url: `/user/products/${id}/reviews/stats`, method: 'GET' }),
+  getMyReviews: (params) => request({ url: '/user/my-reviews', method: 'GET', data: params }),
+  getCanReviewOrders: () => request({ url: '/user/can-review-orders', method: 'GET' })
 }

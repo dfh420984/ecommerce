@@ -95,5 +95,10 @@
     <view class="action-btn primary-btn" wx:if="{{order.pay_status === 1 && order.order_status !== 5 && order.order_status !== 6 && order.order_status !== 7 && order.order_status !== 8}}" bindtap="onApplyRefund">申请退款</view>
     <!-- 查看退款：退款中或已退款 -->
     <view class="action-btn primary-btn" wx:if="{{order.order_status === 7 || order.order_status === 8}}" bindtap="onViewRefundDetail">查看退款</view>
+    <!-- 去评价：已完成 -->
+    <view class="action-btn review-btn" wx:if="{{order.order_status === 5}}" bindtap="onGoToReview">
+      <text class="btn-icon">✍️</text>
+      <text>去评价</text>
+    </view>
   </view>
 </view>

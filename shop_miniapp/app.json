@@ -22,7 +22,10 @@
     "pages/refund-apply/refund-apply",
     "pages/refund-list/refund-list",
     "pages/refund-detail/refund-detail",
-    "pages/logistics/logistics"
+    "pages/logistics/logistics",
+    "pages/favorite/favorite",
+    "pages/reviews/reviews",
+    "pages/write-review/write-review"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffffff",
