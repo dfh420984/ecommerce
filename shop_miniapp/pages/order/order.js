@@ -1,5 +1,6 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -23,7 +24,10 @@ Page({
     submitting: false // 是否正在提交订单
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('order_page_title', '确认订单')
+    
     if (options.order_id) {
       this.setData({ orderId: parseInt(options.order_id) })
     }

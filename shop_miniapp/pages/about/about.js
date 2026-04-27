@@ -15,7 +15,7 @@ Page({
 
   async onLoad() {
     // 设置导航栏标题
-    await config.setNavigationBarTitle('shop_name', '关于我们')
+    await config.setNavigationBarTitle('about_page_title', '关于我们')
     
     // 加载配置信息
     this.loadAboutInfo()

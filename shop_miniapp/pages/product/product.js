@@ -1,6 +1,7 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
 const util = require('../../utils/util.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -15,7 +16,10 @@ Page({
     reviewStats: null // 评论统计
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('product_page_title', '商品详情')
+    
     if (options.id) {
       this.setData({ id: parseInt(options.id) })
       this.loadProduct()

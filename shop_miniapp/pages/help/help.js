@@ -1,4 +1,5 @@
 const config = require('../../utils/config')
+const configUtil = require('../../utils/config.js')
 const request = require('../../utils/request')
 
 Page({
@@ -15,7 +16,10 @@ Page({
     filteredQuestions: []
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await configUtil.setNavigationBarTitle('help_page_title', '帮助中心')
+    
     this.loadHelpConfig()
     this.loadCategories()
     this.loadQuestions()

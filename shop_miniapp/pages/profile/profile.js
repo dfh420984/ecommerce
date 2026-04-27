@@ -15,7 +15,9 @@ Page({
     saving: false
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('profile_page_title', '个人资料')
     this.loadUserInfo()
   },
 

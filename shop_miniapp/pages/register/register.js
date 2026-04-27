@@ -1,4 +1,5 @@
 const api = require('../../services/api.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -9,7 +10,10 @@ Page({
     phone: ''
   },
 
-  onLoad() {},
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('register_page_title', '注册')
+  },
 
   onUsernameInput(e) {
     this.setData({ username: e.detail.value })

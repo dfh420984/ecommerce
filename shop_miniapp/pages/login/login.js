@@ -1,4 +1,5 @@
 const api = require('../../services/api.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -7,7 +8,10 @@ Page({
     password: ''
   },
 
-  onLoad() {},
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('login_page_title', '登录')
+  },
 
   onUsernameInput(e) {
     this.setData({ username: e.detail.value })

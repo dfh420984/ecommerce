@@ -1,4 +1,5 @@
 const api = require('../../services/api.js')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -17,7 +18,10 @@ Page({
     payDisabled: false // 支付按钮是否禁用
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('pay_page_title', '支付')
+    
     if (options.order_id) {
       this.setData({ orderId: parseInt(options.order_id) })
     }

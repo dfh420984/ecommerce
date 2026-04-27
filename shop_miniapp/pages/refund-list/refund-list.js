@@ -1,5 +1,6 @@
 // pages/refund-list/refund-list.js
 const api = require('../../services/api')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -12,7 +13,9 @@ Page({
     statusFilter: '' // 空表示全部
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('refund_list_title', '退款列表')
     this.loadRefunds()
   },
 

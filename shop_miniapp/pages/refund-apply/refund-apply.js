@@ -1,5 +1,6 @@
 // pages/refund-apply/refund-apply.js
 const api = require('../../services/api')
+const config = require('../../utils/config.js')
 const app = getApp()
 const image = require('../../utils/image')
 
@@ -15,7 +16,10 @@ Page({
     submitting: false
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('refund_apply_title', '申请退款')
+    
     if (options.order_id) {
       // 将字符串转换为数字
       this.setData({ orderId: parseInt(options.order_id, 10) })

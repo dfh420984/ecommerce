@@ -1,5 +1,6 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -16,7 +17,9 @@ Page({
     hasSubCategories: false // 是否有子分类
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('category_page_title', '商品分类')
     this.loadCategories()
     this.loadProducts()
   },

@@ -1,5 +1,6 @@
 // pages/refund-detail/refund-detail.js
 const api = require('../../services/api')
+const config = require('../../utils/config.js')
 const image = require('../../utils/image')
 
 Page({
@@ -9,7 +10,10 @@ Page({
     loading: true
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('refund_detail_title', '退款详情')
+    
     if (options.id) {
       this.setData({ refundId: options.id })
       this.loadRefundDetail(options.id)

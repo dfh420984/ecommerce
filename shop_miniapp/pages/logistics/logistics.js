@@ -1,5 +1,6 @@
 // pages/logistics/logistics.js
 const api = require('../../services/api')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -11,7 +12,10 @@ Page({
     loading: true
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('logistics_page_title', '物流信息')
+    
     if (options.order_id) {
       this.setData({ orderId: options.order_id })
       this.loadLogistics(options.order_id)

@@ -4,6 +4,7 @@ import (
 	"shop_api/database"
 	"shop_api/models"
 	"shop_api/utils"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,11 +29,18 @@ func GetConfigs(c *gin.Context) {
 // GetConfigByName 根据名称获取配置值（公开接口，小程序使用）
 func GetConfigByName(c *gin.Context) {
 	name := c.Param("name")
-
 	var config models.Config
 	if err := database.GetDB().Where("name = ?", name).First(&config).Error; err != nil {
-		utils.Fail(c, "配置不存在")
-		return
+		// 如果name包含了title,在用shop_name查一遍页面标题
+		if strings.Contains(name, "title") {
+			if err = database.GetDB().Where("name = ?", "shop_name").First(&config).Error; err != nil {
+				utils.Fail(c, "配置不存在")
+				return
+			}
+		} else {
+			utils.Fail(c, "配置不存在")
+			return
+		}
 	}
 
 	utils.Success(c, config)

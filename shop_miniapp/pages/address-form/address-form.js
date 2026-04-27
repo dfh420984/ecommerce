@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -17,7 +18,10 @@ Page({
     selectedRegion: ''
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('address_form_title', '编辑地址')
+    
     if (options.id) {
       this.setData({ id: parseInt(options.id) })
       this.loadAddress()

@@ -1,5 +1,6 @@
 const api = require('../../utils/request.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -7,7 +8,10 @@ Page({
     order: null
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('order_detail_title', '订单详情')
+    
     if (options.id) {
       this.setData({ id: parseInt(options.id, 10) })
       this.loadOrder()

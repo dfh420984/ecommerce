@@ -1,9 +1,14 @@
+const config = require('../../utils/config.js')
+
 Page({
   data: {
     url: ''
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('webview_page_title', '网页')
+    
     if (options.url) {
       this.setData({
         url: decodeURIComponent(options.url)

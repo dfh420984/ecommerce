@@ -1,5 +1,6 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -14,7 +15,10 @@ Page({
     searchTimer: null // 搜索防抖定时器
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('product_list_title', '商品列表')
+    
     const type = options.type || 'recommend'
     let title = type === 'recommend' ? '推荐商品' : (type === 'new' ? '新品上市' : '搜索商品')
     

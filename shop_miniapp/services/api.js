@@ -1,7 +1,10 @@
-const { request } = require('../utils/request')
+const { request, uploadImage } = require('../utils/request')
 
 // 小程序 API（方法需与后端路由保持一致）
 module.exports = {
+  // 图片上传
+  uploadImage,
+
   // 用户相关
   register: (data) => request({ url: '/miniapp/register', method: 'POST', data }),
   login: (data) => request({ url: '/miniapp/login', method: 'POST', data }),

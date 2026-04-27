@@ -1,4 +1,6 @@
 const api = require('../../services/api.js')
+const image = require('../../utils/image.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -10,17 +12,21 @@ Page({
     productImage: '',
     rating: 5,
     content: '',
-    images: [],
+    images: [], // 存储已上传的图片URL
+    uploadingImages: [], // 正在上传的图片
     isAnonymous: 0
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('write_review_title', '写评价')
+    
     this.setData({
       orderId: options.order_id,
       orderItemId: options.order_item_id,
       productId: options.product_id,
-      productName: options.product_name,
-      productImage: options.product_image
+      productName: decodeURIComponent(options.product_name || ''),
+      productImage: decodeURIComponent(options.product_image || '')
     })
   },
 
@@ -36,19 +42,44 @@ Page({
   },
 
   // 上传图片
-  onUploadImage() {
-    if (this.data.images.length >= 9) {
+  async onUploadImage() {
+    const maxImages = 9
+    const currentCount = this.data.images.length + this.data.uploadingImages.length
+    
+    if (currentCount >= maxImages) {
       wx.showToast({ title: '最多上传9张图片', icon: 'none' })
       return
     }
 
     wx.chooseMedia({
-      count: 9 - this.data.images.length,
+      count: maxImages - currentCount,
       mediaType: ['image'],
       sizeType: ['compressed'],
-      success: (res) => {
-        const images = [...this.data.images, ...res.tempFiles.map(f => f.tempFilePath)]
+      success: async (res) => {
+        wx.showLoading({ title: '上传中...' })
+        
+        const tempFiles = res.tempFiles.map(f => f.tempFilePath)
+        const uploadedUrls = []
+        
+        // 逐张上传图片
+        for (const filePath of tempFiles) {
+          try {
+            const result = await api.uploadImage(filePath)
+            // 格式化图片URL
+            const imageUrl = image.formatImageUrl(result.data.url)
+            uploadedUrls.push(imageUrl)
+          } catch (err) {
+            console.error('上传图片失败:', err)
+            wx.hideLoading()
+            wx.showToast({ title: '图片上传失败', icon: 'none' })
+            return
+          }
+        }
+        
+        wx.hideLoading()
+        const images = [...this.data.images, ...uploadedUrls]
         this.setData({ images })
+        wx.showToast({ title: `成功上传${uploadedUrls.length}张图片`, icon: 'success' })
       }
     })
   },
@@ -75,15 +106,13 @@ Page({
     wx.showLoading({ title: '提交中...' })
 
     try {
-      // TODO: 上传图片到服务器获取URL
-      // 这里简化处理，直接使用本地路径
       await api.createReview({
         order_id: parseInt(this.data.orderId),
         product_id: parseInt(this.data.productId),
         order_item_id: parseInt(this.data.orderItemId),
         rating: this.data.rating,
         content: this.data.content,
-        images: this.data.images,
+        images: this.data.images, // 使用已上传的图片URL
         is_anonymous: this.data.isAnonymous
       })
 

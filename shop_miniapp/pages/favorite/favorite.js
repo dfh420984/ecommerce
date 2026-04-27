@@ -1,5 +1,6 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -11,7 +12,9 @@ Page({
     loading: false
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('favorite_page_title', '我的收藏')
     this.loadFavorites()
   },
 

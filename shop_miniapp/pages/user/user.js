@@ -1,5 +1,6 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -35,7 +36,9 @@ Page({
     }
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('user_page_title', '个人中心')
     this.checkLoginStatus()
   },
 

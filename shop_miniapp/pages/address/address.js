@@ -1,4 +1,5 @@
 const api = require('../../utils/request.js')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -8,7 +9,10 @@ Page({
     selectedId: null
   },
 
-  onLoad(options) {
+  async onLoad(options) {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('address_page_title', '收货地址')
+    
     if (options.mode === 'select') {
       this.setData({ mode: 'select' })
     }

@@ -1,5 +1,6 @@
 const api = require('../../services/api.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -12,14 +13,14 @@ Page({
     loading: false
   },
 
-  onLoad(options) {
+  async onLoad(options) {
     if (options.product_id) {
       this.setData({ productId: parseInt(options.product_id) })
       // 设置页面标题为商品评价
-      wx.setNavigationBarTitle({ title: '商品评价' })
+      await config.setNavigationBarTitle('reviews_page_title', '商品评价')
     } else {
       // 设置页面标题为我的评价
-      wx.setNavigationBarTitle({ title: '我的评价' })
+      await config.setNavigationBarTitle('reviews_page_title', '我的评价')
     }
     this.loadReviews()
   },

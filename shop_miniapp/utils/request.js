@@ -90,6 +90,34 @@ const unfavoriteProduct = (id) => request({ url: `/user/products/${id}/favorite`
 const checkFavoriteStatus = (id) => request({ url: `/user/products/${id}/favorite/status` })
 const getMyFavorites = (params) => request({ url: '/user/favorites', data: params })
 
+// 图片上传
+const uploadImage = (filePath) => {
+  return new Promise((resolve, reject) => {
+    const token = app.globalData.token
+    wx.uploadFile({
+      url: app.globalData.apiBase + '/upload',
+      filePath: filePath,
+      name: 'file',
+      header: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: (res) => {
+        const data = JSON.parse(res.data)
+        if (data.code === 0) {
+          resolve(data)
+        } else {
+          wx.showToast({ title: data.msg || '上传失败', icon: 'none' })
+          reject(new Error(data.msg || '上传失败'))
+        }
+      },
+      fail: (err) => {
+        wx.showToast({ title: '网络错误', icon: 'none' })
+        reject(err)
+      }
+    })
+  })
+}
+
 // 通用 GET 和 POST 方法
 const get = (url, params) => request({ url, method: 'GET', data: params })
 const post = (url, data) => request({ url, method: 'POST', data })
@@ -98,6 +126,7 @@ module.exports = {
   request,
   get,
   post,
+  uploadImage,
   login,
   wechatLogin,
   register,

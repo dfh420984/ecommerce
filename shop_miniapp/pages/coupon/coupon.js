@@ -1,4 +1,5 @@
 const api = require('../../services/api')
+const config = require('../../utils/config.js')
 
 Page({
   data: {
@@ -9,7 +10,9 @@ Page({
     loading: false
   },
 
-  onLoad() {
+  async onLoad() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('coupon_page_title', '优惠券')
     this.loadAvailableCoupons()
   },
 

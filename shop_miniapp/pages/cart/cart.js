@@ -1,5 +1,6 @@
 const api = require('../../utils/request.js')
 const image = require('../../utils/image')
+const config = require('../../utils/config.js')
 const app = getApp()
 
 Page({
@@ -10,7 +11,10 @@ Page({
     isEmpty: false
   },
 
-  onShow() {
+  async onShow() {
+    // 设置导航栏标题
+    await config.setNavigationBarTitle('cart_page_title', '购物车')
+    
     if (app.globalData.token) {
       this.loadCart()
     } else {
