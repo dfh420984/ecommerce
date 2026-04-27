@@ -305,12 +305,51 @@ func WechatLogin(c *gin.Context) {
 		return
 	}
 
+	// 这里应该调用微信API获取openid和session_key
+	// 由于个人小程序无法使用wx.login获取code，我们采用模拟方式
+	// 在实际生产环境中，你需要配置微信小程序的AppID和AppSecret
+
+	// 模拟微信登录成功
+	openid := "mock_openid_" + input.Code // 实际应通过微信API获取
+
+	// 查找是否已有该openid的用户
+	var user models.User
+	err := database.GetDB().Where("openid = ?", openid).First(&user).Error
+
+	if err != nil {
+		// 用户不存在，创建新用户
+		user = models.User{
+			Username: "wx_" + input.Code,
+			Nickname: "微信用户",
+			OpenID:   openid,
+			Status:   models.UserStatusEnabled,
+			UserType: models.UserTypeNormal,
+		}
+
+		if err := database.GetDB().Create(&user).Error; err != nil {
+			utils.Fail(c, "创建用户失败")
+			return
+		}
+
+		// 新用户注册赠送优惠券
+		grantNewUserCoupons(user.ID)
+	}
+
+	// 生成JWT token
+	token, err := utils.GenerateToken(user.ID, 72)
+	if err != nil {
+		utils.Fail(c, "生成令牌失败")
+		return
+	}
+
 	utils.Success(c, gin.H{
-		"token": "mock-token-for-wechat",
+		"token": token,
 		"user": gin.H{
-			"id":       1,
-			"username": "wechat_user",
-			"nickname": "微信用户",
+			"id":       user.ID,
+			"username": user.Username,
+			"nickname": user.Nickname,
+			"avatar":   user.Avatar,
+			"phone":    user.Phone,
 		},
 	})
 }
